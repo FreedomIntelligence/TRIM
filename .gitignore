@@ -9,6 +9,7 @@ dist
 *.log.*
 *.json
 *.jsonl
+logs
 
 # Data
 !**/alpaca-data-conversation.json
