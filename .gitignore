@@ -35,3 +35,9 @@ ckpts*
 
 # Demo
 serve_images/
+
+# Results
+benchmark_results/
+
+# Models
+model/
