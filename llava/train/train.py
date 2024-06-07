@@ -492,10 +492,8 @@ def preprocess_v1(
                     f" (ignored)"
                 )
 
-    return dict(
-        input_ids=input_ids,
-        labels=targets,
-    )
+    texts = [prompt.replace('<image>', ' ') for prompt in conversations]
+    return dict(input_ids=input_ids, labels=targets, texts=texts)
 
 
 def preprocess_mpt(
@@ -728,7 +726,8 @@ class LazySupervisedDataset(Dataset):
             has_image=('image' in self.list_data_dict[i]))
         if isinstance(i, int):
             data_dict = dict(input_ids=data_dict["input_ids"][0],
-                             labels=data_dict["labels"][0])
+                             labels=data_dict["labels"][0],
+                             texts=data_dict["texts"][0],)
 
         # image exist in the data
         if 'image' in self.list_data_dict[i]:
@@ -770,6 +769,9 @@ class DataCollatorForSupervisedDataset(object):
                 batch['images'] = torch.stack(images)
             else:
                 batch['images'] = images
+
+        if 'texts' in instances[0]:
+            batch['texts'] = [instance['texts'] for instance in instances]
 
         return batch
 

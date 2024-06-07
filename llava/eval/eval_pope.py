@@ -52,7 +52,11 @@ def eval_pope(answers, label_file):
 
     precision = float(TP) / float(TP + FP)
     recall = float(TP) / float(TP + FN)
-    f1 = 2*precision*recall / (precision + recall)
+
+    if precision + recall == 0:
+        f1 = 0
+    else:
+        f1 = 2*precision*recall / (precision + recall)
     acc = (TP + TN) / (TP + TN + FP + FN)
     print('Accuracy: {}'.format(acc))
     print('Precision: {}'.format(precision))
@@ -61,21 +65,31 @@ def eval_pope(answers, label_file):
     print('Yes ratio: {}'.format(yes_ratio))
     print('%.3f, %.3f, %.3f, %.3f, %.3f' % (f1, acc, precision, recall, yes_ratio) )
 
+    return f1
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--annotation-dir", type=str)
     parser.add_argument("--question-file", type=str)
     parser.add_argument("--result-file", type=str)
+    parser.add_argument('--path_to_all_results', required=True, help="path to all benchmark results, a tsv file")
     args = parser.parse_args()
 
     questions = [json.loads(line) for line in open(args.question_file)]
     questions = {question['question_id']: question for question in questions}
     answers = [json.loads(q) for q in open(args.result_file)]
+
+    f1s = []
     for file in os.listdir(args.annotation_dir):
         assert file.startswith('coco_pope_')
         assert file.endswith('.json')
         category = file[10:-5]
         cur_answers = [x for x in answers if questions[x['question_id']]['category'] == category]
         print('Category: {}, # samples: {}'.format(category, len(cur_answers)))
-        eval_pope(cur_answers, os.path.join(args.annotation_dir, file))
+        f1 = eval_pope(cur_answers, os.path.join(args.annotation_dir, file))
+        f1s.append(f1)
         print("====================================")
+    avg_over_f1 = sum(f1s) / len(f1s) * 100
+    print(f'avg of F1: {avg_over_f1:.2f}')
+    with open(args.path_to_all_results, 'a') as f:
+        f.write(f"POPE (Avg. F1)\t{avg_over_f1:.2f}\n")

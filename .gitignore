@@ -38,6 +38,8 @@ serve_images/
 
 # Results
 benchmark_results/
+benchmarks
 
 # Models
 model/
+llava/cli_demo/

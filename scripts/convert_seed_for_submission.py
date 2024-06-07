@@ -8,6 +8,7 @@ def get_args():
     parser.add_argument("--annotation-file", type=str)
     parser.add_argument("--result-file", type=str)
     parser.add_argument("--result-upload-file", type=str)
+    parser.add_argument('--path_to_all_results', required=True, help="path to all benchmark results, a tsv file")
     return parser.parse_args()
 
 
@@ -49,6 +50,9 @@ def eval_single(result_file, eval_only_type=None):
         print(f"Total accuracy: {total_accuracy:.2f}%")
     else:
         print(f"{eval_only_type} accuracy: {total_accuracy:.2f}%")
+        if eval_only_type == 'image':
+            with open(args.path_to_all_results, 'a') as f:
+                f.write(f"SEEDBench (Image)\t{total_accuracy:.2f}\n")
 
     return results
 
@@ -60,6 +64,8 @@ if __name__ == "__main__":
     results = eval_single(args.result_file)
     eval_single(args.result_file, eval_only_type='image')
     eval_single(args.result_file, eval_only_type='video')
+
+    os.makedirs(os.path.dirname(args.result_upload_file), exist_ok=True)
 
     with open(args.result_upload_file, 'w') as fp:
         for question in data['questions']:

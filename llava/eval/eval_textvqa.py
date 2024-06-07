@@ -3,7 +3,7 @@ import argparse
 import json
 import re
 
-from llava.eval.m4c_evaluator import TextVQAAccuracyEvaluator
+from m4c_evaluator import TextVQAAccuracyEvaluator
 
 
 def get_args():
@@ -11,6 +11,7 @@ def get_args():
     parser.add_argument('--annotation-file', type=str)
     parser.add_argument('--result-file', type=str)
     parser.add_argument('--result-dir', type=str)
+    parser.add_argument('--path_to_all_results', required=True, help="path to all benchmark results, a tsv file")
     return parser.parse_args()
 
 
@@ -48,7 +49,10 @@ def eval_single(annotation_file, result_file):
         })
 
     evaluator = TextVQAAccuracyEvaluator()
-    print('Samples: {}\nAccuracy: {:.2f}%\n'.format(len(pred_list), 100. * evaluator.eval_pred_list(pred_list)))
+    acc = 100. * evaluator.eval_pred_list(pred_list)
+    print('Samples: {}\nAccuracy: {:.2f}%\n'.format(len(pred_list), acc))
+    with open(args.path_to_all_results, 'a') as f:
+        f.write(f"TextVQA (Acc)\t{acc:.2f}\n")
 
 
 if __name__ == "__main__":
@@ -57,9 +61,10 @@ if __name__ == "__main__":
     if args.result_file is not None:
         eval_single(args.annotation_file, args.result_file)
 
-    if args.result_dir is not None:
-        for result_file in sorted(os.listdir(args.result_dir)):
-            if not result_file.endswith('.jsonl'):
-                print(f'Skipping {result_file}')
-                continue
-            eval_single(args.annotation_file, os.path.join(args.result_dir, result_file))
+
+    # if args.result_dir is not None:
+    #     for result_file in sorted(os.listdir(args.result_dir)):
+    #         if not result_file.endswith('.jsonl'):
+    #             print(f'Skipping {result_file}')
+    #             continue
+    #         eval_single(args.annotation_file, os.path.join(args.result_dir, result_file))

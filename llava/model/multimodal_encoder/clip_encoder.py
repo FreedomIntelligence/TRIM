@@ -3,7 +3,7 @@ import torch.nn as nn
 import random
 import torch.nn.functional as F
 
-from transformers import CLIPVisionModel, CLIPImageProcessor, CLIPVisionConfig
+from transformers import CLIPVisionModel, CLIPVisionModelWithProjection, CLIPImageProcessor, CLIPVisionConfig, CLIPTextModelWithProjection, AutoTokenizer
 
 # Define the PCA function with autonomous dimension selection
 def apply_pca(cur_image_features, variance_threshold=0.99):
@@ -67,6 +67,19 @@ def compute_total_variation(X, centroids, labels):
     """
     return sum((X[labels==k] - centroids[k]).pow(2).sum() for k in range(len(centroids)))
 
+def compute_cosine_similarity_matrix(features):
+    # Normalize the features
+    normalized_features = F.normalize(features, p=2, dim=-1)
+    # Compute cosine similarity matrix
+    cosine_similarity_matrix = torch.matmul(normalized_features, normalized_features.transpose(-1, -2))
+    return cosine_similarity_matrix
+
+def generate_cluster_mask(similarity_matrix, init_mask, threshold):
+    # Generate candidates based on the similarity matrix and initial mask
+    candidates = similarity_matrix * init_mask >= threshold
+    # Sum over the patches to find clusters
+    cluster_mask = candidates.sum(dim=1) >= 1
+    return cluster_mask
 
 
 class CLIPVisionTower(nn.Module):
@@ -78,7 +91,7 @@ class CLIPVisionTower(nn.Module):
         self.vision_tower_name = vision_tower
         self.select_layer = args.mm_vision_select_layer
         self.select_feature = getattr(args, 'mm_vision_select_feature', 'patch')
-        self.token_reduce_func = getattr(args, 'mm_vision_token_reduce_func', 'Pooling:2')
+        self.token_reduce_func = getattr(args, 'mm_vision_token_reduce_func', None)
 
         if not delay_load:
             self.load_model()
@@ -93,27 +106,38 @@ class CLIPVisionTower(nn.Module):
             return
 
         self.image_processor = CLIPImageProcessor.from_pretrained(self.vision_tower_name)
-        self.vision_tower = CLIPVisionModel.from_pretrained(self.vision_tower_name, device_map=device_map)
+        if 'TextSim' not in self.token_reduce_func:
+            self.vision_tower = CLIPVisionModel.from_pretrained(self.vision_tower_name, device_map=device_map)
+        else:
+            self.vision_tower = CLIPVisionModelWithProjection.from_pretrained(self.vision_tower_name, device_map=device_map)
         self.vision_tower.requires_grad_(False)
+
+        # NOTE: CLIP text encoder
+        if 'TextSim' in self.token_reduce_func:
+            self.text_tower = CLIPTextModelWithProjection.from_pretrained(self.vision_tower_name, device_map=device_map)
+            self.text_tokenizer = AutoTokenizer.from_pretrained(self.vision_tower_name)
+            self.text_tower.requires_grad_(False)
 
         self.is_loaded = True
 
     def feature_select(self, image_forward_outs):
-        image_features = image_forward_outs.hidden_states[self.select_layer]
+        all_image_features = image_forward_outs.hidden_states[self.select_layer]
         if self.select_feature == 'patch':
-            image_features = image_features[:, 1:]
+            image_features = all_image_features[:, 1:]
         elif self.select_feature == 'cls_patch':
-            image_features = image_features
+            image_features = all_image_features
         else:
             raise ValueError(f'Unexpected select feature: {self.select_feature}')
-        return image_features
+        return image_features, all_image_features
 
-    def token_reduction(self, image_features):
+    def token_reduction(self, image_features, all_image_features, texts=None):
         if not self.token_reduce_func:
-            return image_features
+            return image_features, [image_features.shape[1]]*image_features.shape[0]
         if 'Pooling' in self.token_reduce_func:
             batch_size, tokens_number, dimension = image_features.shape
-            k = int(self.token_reduce_func.replace('Pooling:', ''))  # Set your desired k value here
+            pooling_func_k = self.token_reduce_func.replace('Pooling:', '')
+            k = int(pooling_func_k.split('-')[-1])  # Set your desired k value here
+            pooling_func = pooling_func_k.split('-')[0] if '-' in pooling_func_k else 'linear'
             actual_dims = []  # To store the actual number of components used for each image
             with torch.cuda.amp.autocast(enabled=False):
                 reduced_features = []
@@ -121,9 +145,38 @@ class CLIPVisionTower(nn.Module):
                     feature = image_features[i]
                     # Interpolate to reduce features [tokens_number, dimension] -> [k, dimension]
                     # Adjusting input to be (1, dimension, tokens_number) and output size to be (dimension, k)
-                    feature = F.interpolate(feature.unsqueeze(0).permute(0, 2, 1), size=(k,), mode='linear', align_corners=False).squeeze(0).permute(1, 0)
+                    if pooling_func == 'area':
+                        old_width = old_height = int(tokens_number**0.5)
+                        new_width = new_height = int(k**0.5)
+                        assert new_height * new_width == k
+                        # Use 2D area interpolate
+                        feature = feature.view(1, dimension, old_height, old_width)
+                        interpolated_feature = F.interpolate(feature, size=(new_height, new_width), mode='area')
+                        feature = interpolated_feature.view(dimension, -1).permute(1, 0)
+                        actual_dims.append(k)
+                    elif pooling_func == 'HRarea':
+                        # k=1,2,3,4,5
+                        patch_nums = [1, 4, 16, 64, 256]
+                        assert k > 0 and k <= len(patch_nums)
+                        interpolated_features = []
+
+                        old_width = old_height = int(tokens_number**0.5)
+                        feature = feature.view(1, dimension, old_height, old_width)
+                        for i in range(k):
+                            patch_num = patch_nums[i]
+                            new_width = new_height = int(patch_num**0.5)
+                            interpolated_feature = F.interpolate(feature, size=(new_height, new_width), mode='area')
+                            interpolated_feature = interpolated_feature.view(dimension, -1).permute(1, 0)
+                            # interpolated_features.append(interpolated_feature)
+                            interpolated_features.insert(0, interpolated_feature)
+                        feature = torch.cat(interpolated_features, dim=0)
+                        actual_dims.append(feature.shape[0])
+                    elif pooling_func == 'linear':
+                        feature = F.interpolate(feature.unsqueeze(0).permute(0, 2, 1), size=(k,), mode='linear', align_corners=False).squeeze(0).permute(1, 0)
+                        actual_dims.append(k)
+                    else:
+                        raise ValueError(f'Unknown pooling function: {pooling_func}.')
                     reduced_features.append(feature)
-                    actual_dims.append(k)
                 image_features = torch.stack(reduced_features).to(image_features.device).to(image_features.dtype)
         elif 'PCA' in self.token_reduce_func:
             # Apply PCA to each image in the batch
@@ -179,26 +232,101 @@ class CLIPVisionTower(nn.Module):
                 kmeans_image_features.append(cur_image_features)
             # Stack all the padded image features to get the final tensor of shape [bsz, seq_len, feature_dim]
             image_features = torch.stack(kmeans_image_features)
-        # TODO: Tsne
-        # TODO: Attention [CLS] [Text]
+        elif 'Cluster' in self.token_reduce_func:
+            bsz, seq_len, feature_dim = image_features.shape
+            mask_ratio = float(self.token_reduce_func.replace('Cluster:', ''))
+            threshold = 0.8  # You can adjust this value based on your requirements
+
+            cluster_masked_features = []
+            actual_dims = []  # To store the actual number of components used for each image
+
+            for i in range(bsz):
+                cur_image_features = image_features[i]
+
+                # Compute cosine similarity matrix
+                similarity_matrix = compute_cosine_similarity_matrix(cur_image_features)
+
+                # Generate initial random mask
+                init_mask = torch.rand(seq_len) < mask_ratio
+                init_mask = init_mask.to(cur_image_features.device).unsqueeze(0).bool()
+
+                # Generate cluster mask
+                cluster_mask = generate_cluster_mask(similarity_matrix, init_mask, threshold)
+                cluster_mask = cluster_mask.unsqueeze(0).bool()
+
+                # Combine initial mask and cluster mask
+                combined_mask = init_mask | cluster_mask
+
+                # Apply the mask to the features
+                masked_features = cur_image_features[combined_mask.squeeze(0)]
+
+                actual_dims.append(masked_features.size(0))  # Save the actual number of components
+
+                # Pad to [seq_len, feature_dim] if necessary
+                pad_size = seq_len - masked_features.size(0)
+                if pad_size > 0:
+                    padding = torch.zeros((pad_size, feature_dim), device=masked_features.device, dtype=masked_features.dtype)
+                    masked_features = torch.cat((masked_features, padding), dim=0)
+
+                cluster_masked_features.append(masked_features)
+
+            # Stack all the padded image features to get the final tensor of shape [bsz, seq_len, feature_dim]
+            image_features = torch.stack(cluster_masked_features)
+        elif 'TextSim' in self.token_reduce_func:
+            batch_size, tokens_number, dimension = image_features.shape
+            k = float(self.token_reduce_func.replace('TextSim:', ''))  # Set your desired k value here
+
+            # Get image embedding
+            proj_image_features = self.vision_tower.visual_projection(self.vision_tower.vision_model.post_layernorm(image_features))
+            # Get text embedding
+            text_inputs = self.text_tokenizer(text=texts, return_tensors="pt", truncation=True, padding=True)
+            text_inputs = {k: v.to(device=image_features.device) for k, v in text_inputs.items()}
+            text_features = self.text_tower(**text_inputs, output_hidden_states=True).text_embeds
+
+            # Calculate similarity
+            similarities = torch.matmul(proj_image_features, text_features.unsqueeze(2)).squeeze(2)  # [batch_size, tokens_number]
+
+            # Apply softmax to similarities
+            similarities = F.softmax(similarities, dim=-1)
+
+            # Determine the number of tokens to keep
+            num_tokens_to_keep = int(tokens_number * k)
+
+            # Select top-k tokens by similarity scores
+            topk_values, topk_indices = torch.topk(similarities, num_tokens_to_keep, dim=1, largest=False, sorted=False)
+
+            # Use indices to gather the top-k tokens
+            selected_image_features = torch.zeros_like(image_features)
+            for i in range(batch_size):
+                selected_image_features[i, :num_tokens_to_keep] = image_features[i, topk_indices[i]]
+
+            # Update actual_dims
+            actual_dims = [num_tokens_to_keep] * batch_size
+            image_features = selected_image_features
         else:
             raise ValueError(f'Unknown Token Reduction Function::{self.token_reduce_func}')
         return image_features, actual_dims
 
     @torch.no_grad()
-    def forward(self, images):
+    def forward(self, images, texts=None):
         if type(images) is list:
             image_features = []
+            all_image_features = []
             for image in images:
                 image_forward_out = self.vision_tower(image.to(device=self.device, dtype=self.dtype).unsqueeze(0), output_hidden_states=True)
-                image_feature = self.feature_select(image_forward_out).to(image.dtype)
+                image_feature, all_image_feature = self.feature_select(image_forward_out)
+                image_features = image_features.to(images.dtype)
+                all_image_features = all_image_features.to(images.dtype)
                 image_features.append(image_feature)
+                all_image_features.append(all_image_feature)
         else:
             image_forward_outs = self.vision_tower(images.to(device=self.device, dtype=self.dtype), output_hidden_states=True)
-            image_features = self.feature_select(image_forward_outs).to(images.dtype)
+            image_features, all_image_features = self.feature_select(image_forward_outs)
+            image_features = image_features.to(images.dtype)
+            all_image_features = all_image_features.to(images.dtype)
 
         # NOTE: Token Reduction
-        image_features, actual_dims = self.token_reduction(image_features)
+        image_features, actual_dims = self.token_reduction(image_features, all_image_features, texts)
         return image_features, actual_dims
 
     @property

@@ -1,17 +1,26 @@
 #!/bin/bash
 
-gpu_list="${CUDA_VISIBLE_DEVICES:-0}"
-IFS=',' read -ra GPULIST <<< "$gpu_list"
+# gpu_list="${CUDA_VISIBLE_DEVICES:-0}"
+# IFS=',' read -ra GPULIST <<< "$gpu_list"
+
+CKPT=$1
+mp=$2
+path_to_all_results=$3
+
+gpu_list=$(nvidia-smi --query-gpu=index --format=csv,noheader | tr '\n' ',' | sed 's/,$//')
+# gpu_list="2,3,4,5,6"
+
+read -a GPULIST <<< ${gpu_list//,/ }
+# GPULIST=(0 1)
 
 CHUNKS=${#GPULIST[@]}
 
-CKPT="llava-v1.5-13b"
 
 for IDX in $(seq 0 $((CHUNKS-1))); do
-    CUDA_VISIBLE_DEVICES=${GPULIST[$IDX]} python -m llava.eval.model_vqa_loader \
-        --model-path liuhaotian/llava-v1.5-13b \
+    CUDA_VISIBLE_DEVICES=${GPULIST[$IDX]} python ./playground/data/eval/seed_bench/model_vqa_loader.py \
+        --model-path $mp \
         --question-file ./playground/data/eval/seed_bench/llava-seed-bench.jsonl \
-        --image-folder ./playground/data/eval/seed_bench \
+        --image-folder ./benchmarks/SEEDBench/ \
         --answers-file ./playground/data/eval/seed_bench/answers/$CKPT/${CHUNKS}_${IDX}.jsonl \
         --num-chunks $CHUNKS \
         --chunk-idx $IDX \
@@ -33,7 +42,8 @@ done
 
 # Evaluate
 python scripts/convert_seed_for_submission.py \
-    --annotation-file ./playground/data/eval/seed_bench/SEED-Bench.json \
+    --annotation-file ./benchmarks/SEEDBench/SEED-Bench.json \
     --result-file $output_file \
-    --result-upload-file ./playground/data/eval/seed_bench/answers_upload/llava-v1.5-13b.jsonl
+    --result-upload-file ./playground/data/eval/seed_bench/answers_upload/$CKPT.jsonl \
+    --path_to_all_results $path_to_all_results
 

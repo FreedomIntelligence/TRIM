@@ -35,7 +35,7 @@ vision_tower="model/clip-vit-large-patch14-336/snapshots/ce19dc912ca5cd21c8a653c
 ################## Training Config ################
 per_device_train_batch_size=4
 per_device_eval_batch_size=4
-gradient_accumulation_steps=8
+gradient_accumulation_steps=4
 model_max_length=2048
 # model_max_length=4096
 ########### DO NOT CHANGE ###########
@@ -43,13 +43,20 @@ model_max_length=2048
 PROMPT_VERSION=v1
 # PROMPT_VERSION="llava_llama_2"
 ########### DO NOT CHANGE ###########
+reduce_func=PCA
 
 # experiment_name=llava-${MODEL_VERSION}-finetune
-# mlp_adapter_path="/mntcephfs/lab_data/chenshunian/workspace/LLaVA/checkpoints/llava-vicuna-7b-v1.5-pretrain/"
-# experiment_name=llava-${MODEL_VERSION}-finetune-PCA_beforeMLP_thres0.99
-# mlp_adapter_path="./checkpoints/llava-${MODEL_VERSION}-pretrain-PCA_beforeMLP_thres0.99/"
-experiment_name=llava-${MODEL_VERSION}-only-finetune-PCA_beforeMLP_thres0.99
+# experiment_name=llava-${MODEL_VERSION}-pretrain-finetune-PCA_beforeMLP_thres0.99
+# experiment_name=llava-${MODEL_VERSION}-only-finetune-PCA_beforeMLP_thres0.99
+# experiment_name=llava-${MODEL_VERSION}-only-finetune-KMEANS_beforeMLP_K160
+
 mlp_adapter_path="/mntcephfs/lab_data/chenshunian/workspace/LLaVA/checkpoints/llava-vicuna-7b-v1.5-pretrain/"
+# mlp_adapter_path="./checkpoints/llava-${MODEL_VERSION}-pretrain-PCA_beforeMLP_thres0.99/"
+
+# 0.9 0.99 0.999 0.9999
+for reduce_func_param in 0.9 0.99 0.999 0.9999; do
+experiment_name=llava-${MODEL_VERSION}-only-finetune-${reduce_func}_beforeMLP_T${reduce_func_param}
+export WANDB_NAME="only-finetune-${reduce_func}_beforeMLP_T${reduce_func_param}"
 
 deepspeed llava/train/train_mem.py \
     --deepspeed ./scripts/zero3.json \
@@ -62,6 +69,7 @@ deepspeed llava/train/train_mem.py \
     --vision_tower ${vision_tower} \
     --pretrain_mm_mlp_adapter ${mlp_adapter_path}/mm_projector.bin \
     --mm_vision_select_layer -2 \
+    --mm_vision_token_reduce_func ${reduce_func}:${reduce_func_param} \
     --mm_use_im_start_end False \
     --mm_use_im_patch_token False \
     --mm_projector_type mlp2x_gelu \
@@ -73,7 +81,7 @@ deepspeed llava/train/train_mem.py \
     --gradient_accumulation_steps ${gradient_accumulation_steps} \
     --evaluation_strategy "no" \
     --save_strategy "steps" \
-    --save_steps 500 \
+    --save_steps 5000 \
     --save_total_limit 1 \
     --learning_rate 2e-5 \
     --weight_decay 0. \
@@ -87,3 +95,4 @@ deepspeed llava/train/train_mem.py \
     --lazy_preprocess True \
     --report_to wandb \
     > logs/${experiment_name}.log
+done
