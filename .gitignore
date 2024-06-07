@@ -12,6 +12,7 @@ dist
 
 # Data
 !**/alpaca-data-conversation.json
+playground/data/eval
 
 # Editor
 .idea
