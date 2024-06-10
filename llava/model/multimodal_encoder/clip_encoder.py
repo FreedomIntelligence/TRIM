@@ -3,7 +3,7 @@ import torch.nn as nn
 import random
 import torch.nn.functional as F
 
-from transformers import CLIPVisionModel, CLIPVisionModelWithProjection, CLIPImageProcessor, CLIPVisionConfig, CLIPTextModelWithProjection, AutoTokenizer
+from transformers import CLIPModel, CLIPVisionModel, CLIPVisionModelWithProjection, CLIPImageProcessor, CLIPVisionConfig, CLIPTextModelWithProjection, AutoTokenizer
 
 # Define the PCA function with autonomous dimension selection
 def apply_pca(cur_image_features, variance_threshold=0.99):
@@ -106,14 +106,24 @@ class CLIPVisionTower(nn.Module):
             return
 
         self.image_processor = CLIPImageProcessor.from_pretrained(self.vision_tower_name)
-        if 'TextSim' not in self.token_reduce_func:
-            self.vision_tower = CLIPVisionModel.from_pretrained(self.vision_tower_name, device_map=device_map)
-        else:
-            self.vision_tower = CLIPVisionModelWithProjection.from_pretrained(self.vision_tower_name, device_map=device_map)
+        # if 'TextSim' not in self.token_reduce_func:
+        #     self.vision_tower = CLIPVisionModel.from_pretrained(self.vision_tower_name, device_map=device_map)
+        # else:
+        #     self.vision_tower = CLIPVisionModelWithProjection.from_pretrained(self.vision_tower_name, device_map=device_map)
+
+        self.vision_tower = CLIPVisionModel.from_pretrained(self.vision_tower_name, device_map=device_map)
         self.vision_tower.requires_grad_(False)
 
         # NOTE: CLIP text encoder
         if 'TextSim' in self.token_reduce_func:
+            if device_map:  # NOTE: eval
+                self.clip_model = CLIPModel.from_pretrained(self.vision_tower_name)
+                # self.vision_tower = self.clip_model.vision_model
+                self.vision_tower.visual_projection = self.clip_model.visual_projection.to(self.device)#.to(self.vision_tower.weight.dtype)
+                self.clip_model.requires_grad_(False)
+            else:
+                self.vision_tower = CLIPVisionModelWithProjection.from_pretrained(self.vision_tower_name, device_map=device_map)
+
             self.text_tower = CLIPTextModelWithProjection.from_pretrained(self.vision_tower_name, device_map=device_map)
             self.text_tokenizer = AutoTokenizer.from_pretrained(self.vision_tower_name)
             self.text_tower.requires_grad_(False)
@@ -277,7 +287,14 @@ class CLIPVisionTower(nn.Module):
             k = float(self.token_reduce_func.replace('TextSim:', ''))  # Set your desired k value here
 
             # Get image embedding
-            proj_image_features = self.vision_tower.visual_projection(self.vision_tower.vision_model.post_layernorm(image_features))
+            with torch.cuda.amp.autocast(enabled=False):
+                if image_features.dtype == torch.float16:   # NOTE: eval
+                    image_features = image_features.to(torch.float32)
+                nomalized_image_features = self.vision_tower.vision_model.post_layernorm(image_features)
+                # print(self.vision_tower.vision_model.device)
+                # print(self.vision_tower.visual_projection.weight.device)
+                # print(nomalized_image_features.device)
+                proj_image_features = self.vision_tower.visual_projection(nomalized_image_features)
             # Get text embedding
             text_inputs = self.text_tokenizer(text=texts, return_tensors="pt", truncation=True, padding=True)
             text_inputs = {k: v.to(device=image_features.device) for k, v in text_inputs.items()}
@@ -303,6 +320,9 @@ class CLIPVisionTower(nn.Module):
             # Update actual_dims
             actual_dims = [num_tokens_to_keep] * batch_size
             image_features = selected_image_features
+
+            if image_features.dtype == torch.float32:   # NOTE: eval
+                image_features = image_features.to(torch.float16)
         else:
             raise ValueError(f'Unknown Token Reduction Function::{self.token_reduce_func}')
         return image_features, actual_dims
