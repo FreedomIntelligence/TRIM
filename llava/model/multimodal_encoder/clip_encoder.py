@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import random
 import torch.nn.functional as F
+import numpy as np
 
 from transformers import CLIPModel, CLIPVisionModel, CLIPVisionModelWithProjection, CLIPImageProcessor, CLIPVisionConfig, CLIPTextModelWithProjection, AutoTokenizer
 
@@ -115,7 +116,7 @@ class CLIPVisionTower(nn.Module):
         self.vision_tower.requires_grad_(False)
 
         # NOTE: CLIP text encoder
-        if 'TextSim' in self.token_reduce_func:
+        if self.token_reduce_func and 'TextSim' in self.token_reduce_func:
             if device_map:  # NOTE: eval
                 self.clip_model = CLIPModel.from_pretrained(self.vision_tower_name)
                 # self.vision_tower = self.clip_model.vision_model
@@ -284,17 +285,18 @@ class CLIPVisionTower(nn.Module):
             image_features = torch.stack(cluster_masked_features)
         elif 'TextSim' in self.token_reduce_func:
             batch_size, tokens_number, dimension = image_features.shape
-            k = float(self.token_reduce_func.replace('TextSim:', ''))  # Set your desired k value here
+            k = float(self.token_reduce_func.replace('TextSim:', '').replace('TextSim+:', ''))  # Set your desired k value here
 
             # Get image embedding
             with torch.cuda.amp.autocast(enabled=False):
                 if image_features.dtype == torch.float16:   # NOTE: eval
                     image_features = image_features.to(torch.float32)
+                elif image_features.dtype == torch.float32:   # NOTE: eval milebench
+                    image_features = image_features.to(self.vision_tower.vision_model.post_layernorm.weight.dtype)
+                # print(self.vision_tower.vision_model.post_layernorm.weight.dtype)
                 nomalized_image_features = self.vision_tower.vision_model.post_layernorm(image_features)
-                # print(self.vision_tower.vision_model.device)
-                # print(self.vision_tower.visual_projection.weight.device)
-                # print(nomalized_image_features.device)
                 proj_image_features = self.vision_tower.visual_projection(nomalized_image_features)
+
             # Get text embedding
             text_inputs = self.text_tokenizer(text=texts, return_tensors="pt", truncation=True, padding=True)
             text_inputs = {k: v.to(device=image_features.device) for k, v in text_inputs.items()}
@@ -304,21 +306,45 @@ class CLIPVisionTower(nn.Module):
             similarities = torch.matmul(proj_image_features, text_features.unsqueeze(2)).squeeze(2)  # [batch_size, tokens_number]
 
             # Apply softmax to similarities
+            similarities = -similarities
             similarities = F.softmax(similarities, dim=-1)
+
+            if k == -1:
+                # Apply outlier detection to determine ratio
+                def outlier_detection(sim):
+                    sim_np = sim.to(dtype=torch.float32).cpu().numpy().flatten()
+                    Q1 = np.percentile(sim_np, 25)
+                    Q3 = np.percentile(sim_np, 75)
+                    IQR = Q3 - Q1
+                    upper_bound = Q3 + 1.5 * IQR
+                    outlier_indices = np.where((sim_np > upper_bound))[0]
+                    ratio = len(outlier_indices) / len(sim_np)
+                    return ratio
+
+                k = outlier_detection(similarities)
 
             # Determine the number of tokens to keep
             num_tokens_to_keep = int(tokens_number * k)
 
             # Select top-k tokens by similarity scores
-            topk_values, topk_indices = torch.topk(similarities, num_tokens_to_keep, dim=1, largest=False, sorted=False)
+            topk_values, topk_indices = torch.topk(similarities, num_tokens_to_keep, dim=1, largest=True, sorted=False)
 
             # Use indices to gather the top-k tokens
             selected_image_features = torch.zeros_like(image_features)
             for i in range(batch_size):
                 selected_image_features[i, :num_tokens_to_keep] = image_features[i, topk_indices[i]]
+                if 'TextSim+' in self.token_reduce_func:
+                    # Calculate the mean of the remaining tokens
+                    remaining_indices = torch.tensor([j for j in range(tokens_number) if j not in topk_indices[i]], device=image_features.device)
+                    if remaining_indices.numel() > 0:
+                        remaining_mean = image_features[i, remaining_indices].mean(dim=0)
+                    else:
+                        remaining_mean = torch.zeros(dimension, device=image_features.device)
+
+                    selected_image_features[i, num_tokens_to_keep] = remaining_mean
 
             # Update actual_dims
-            actual_dims = [num_tokens_to_keep] * batch_size
+            actual_dims = [num_tokens_to_keep + (1 if 'TextSim+' in self.token_reduce_func else 0)] * batch_size
             image_features = selected_image_features
 
             if image_features.dtype == torch.float32:   # NOTE: eval
