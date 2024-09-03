@@ -6,6 +6,7 @@
 CKPT=$1
 mp=$2
 path_to_all_results=$3
+MODEL_BASE=$4
 
 gpu_list=$(nvidia-smi --query-gpu=index --format=csv,noheader | tr '\n' ',' | sed 's/,$//')
 # gpu_list="2,3,4,5,6"
@@ -19,6 +20,7 @@ CHUNKS=${#GPULIST[@]}
 for IDX in $(seq 0 $((CHUNKS-1))); do
     CUDA_VISIBLE_DEVICES=${GPULIST[$IDX]} python ./playground/data/eval/seed_bench/model_vqa_loader.py \
         --model-path $mp \
+        --model-base $MODEL_BASE \
         --question-file ./playground/data/eval/seed_bench/llava-seed-bench.jsonl \
         --image-folder ./benchmarks/SEEDBench/ \
         --answers-file ./playground/data/eval/seed_bench/answers/$CKPT/${CHUNKS}_${IDX}.jsonl \
@@ -46,4 +48,3 @@ python scripts/convert_seed_for_submission.py \
     --result-file $output_file \
     --result-upload-file ./playground/data/eval/seed_bench/answers_upload/$CKPT.jsonl \
     --path_to_all_results $path_to_all_results
-

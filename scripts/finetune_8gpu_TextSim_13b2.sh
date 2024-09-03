@@ -2,6 +2,8 @@
 # Ref: /mntcephfs/lab_data/chenshunian/workspace/LLaVA/scripts/finetune.sh
 # cd /mntcephfs/lab_data/songdingjie/mllm/LLaVA/
 # conda activate llava
+# bash /mntcephfs/lab_data/songdingjie/mllm/LLaVA/scripts/finetune_8gpu_TextSim_13b2.sh
+# conda activate llava
 module load cuda11.8/toolkit/11.8.0
 # export CUDA_VISIBLE_DEVICES=0
 # export CUDA_VISIBLE_DEVICES=0,1,2,3
@@ -28,13 +30,15 @@ data_qa_image_folder_path="/mntnfs/med_data5/guimingchen/datasets/llava/svit"
 # MODEL_VERSION=llama-2-7b-chat
 # MODEL_VERSION=Meta-Llama-3-8B
 # MODEL_VERSION=vicuna-7b-v1.1
-MODEL_VERSION=vicuna-7b-v1.5
+# MODEL_VERSION=vicuna-7b-v1.5
+MODEL_VERSION=vicuna-13b-v1.5
+
 # vision_tower="model/clip_vit_large_patch14"
 vision_tower="model/clip-vit-large-patch14-336/snapshots/ce19dc912ca5cd21c8a653c79e251e808ccabcd1"
 ################## Training Config ################
-per_device_train_batch_size=4
+per_device_train_batch_size=1
 per_device_eval_batch_size=4
-gradient_accumulation_steps=4
+gradient_accumulation_steps=16
 model_max_length=2048
 # model_max_length=4096
 ########### DO NOT CHANGE ###########
@@ -49,14 +53,14 @@ reduce_func=TextSim
 # experiment_name=llava-${MODEL_VERSION}-only-finetune-PCA_beforeMLP_thres0.99
 # experiment_name=llava-${MODEL_VERSION}-only-finetune-KMEANS_beforeMLP_K160
 
-mlp_adapter_path="/mntcephfs/lab_data/chenshunian/workspace/LLaVA/checkpoints/llava-vicuna-7b-v1.5-pretrain/"
+# mlp_adapter_path="/mntcephfs/lab_data/chenshunian/workspace/LLaVA/checkpoints/llava-vicuna-7b-v1.5-pretrain/"
+mlp_adapter_path="/mntcephfs/data/med/songdingjie/checkpoints/llava-v1.5-mlp2x-336px-pretrain-vicuna-13b-v1.5"
 # mlp_adapter_path="./checkpoints/llava-${MODEL_VERSION}-pretrain-PCA_beforeMLP_thres0.99/"
 
 # linear: 448 384 256 144 128 64 32 16 8 4 2
-# area: 256 144 64 36
-for reduce_func_param in 0.2; do
+for reduce_func_param in -1; do
 experiment_name=llava-${MODEL_VERSION}-only-finetune-${reduce_func}_beforeMLP_T${reduce_func_param}
-export WANDB_NAME="only-finetune-${reduce_func}_beforeMLP_T${reduce_func_param}"
+export WANDB_NAME="13B-only-finetune-${reduce_func}_beforeMLP_T${reduce_func_param}"
 
 deepspeed llava/train/train_mem.py \
     --deepspeed ./scripts/zero3.json \
@@ -74,7 +78,7 @@ deepspeed llava/train/train_mem.py \
     --mm_use_im_patch_token False \
     --mm_projector_type mlp2x_gelu \
     --bf16 True \
-    --output_dir ./checkpoints/finetuned2/${experiment_name} \
+    --output_dir ./checkpoints/finetuned/${experiment_name} \
     --num_train_epochs 1 \
     --per_device_train_batch_size ${per_device_train_batch_size} \
     --per_device_eval_batch_size ${per_device_eval_batch_size} \

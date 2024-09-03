@@ -42,7 +42,7 @@ model_max_length=2048
 PROMPT_VERSION=v1
 # PROMPT_VERSION="llava_llama_2"
 ########### DO NOT CHANGE ###########
-reduce_func=TextSim
+reduce_func=TextSim+
 
 # experiment_name=llava-${MODEL_VERSION}-finetune
 # experiment_name=llava-${MODEL_VERSION}-pretrain-finetune-PCA_beforeMLP_thres0.99
@@ -54,7 +54,7 @@ mlp_adapter_path="/mntcephfs/lab_data/chenshunian/workspace/LLaVA/checkpoints/ll
 
 # linear: 448 384 256 144 128 64 32 16 8 4 2
 # area: 256 144 64 36
-for reduce_func_param in 0.2; do
+for reduce_func_param in 0.05 0.3; do
 experiment_name=llava-${MODEL_VERSION}-only-finetune-${reduce_func}_beforeMLP_T${reduce_func_param}
 export WANDB_NAME="only-finetune-${reduce_func}_beforeMLP_T${reduce_func_param}"
 

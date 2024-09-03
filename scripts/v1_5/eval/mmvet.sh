@@ -17,6 +17,7 @@
 CKPT=$1
 mp=$2
 path_to_all_results=$3
+MODEL_BASE=$4
 
 gpu_list=$(nvidia-smi --query-gpu=index --format=csv,noheader | tr '\n' ',' | sed 's/,$//')
 # gpu_list="2,3,4,5,6"
@@ -30,6 +31,7 @@ CHUNKS=${#GPULIST[@]}
 for IDX in $(seq 0 $((CHUNKS-1))); do
     CUDA_VISIBLE_DEVICES=${GPULIST[$IDX]} python ./llava/eval/model_vqa.py \
         --model-path $mp \
+        --model-base $MODEL_BASE \
         --question-file ./benchmarks/MM-Vet/llava-mm-vet.jsonl \
         --image-folder ./benchmarks/MM-Vet/mm-vet/images \
         --answers-file ./playground/data/eval/mm-vet/answers/${CKPT}/${CHUNKS}_${IDX}.jsonl \

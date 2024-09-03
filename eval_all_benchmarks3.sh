@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# bash /mntcephfs/lab_data/songdingjie/mllm/LLaVA/eval_all_benchmarks.sh
+# bash /wangbenyou/xidong/VisionJamba/visionjamba/eval/eval_all_benchmarks.sh
 module load cuda11.8/toolkit/11.8.0
 # source /mntcephfs/data/med/songdingjie/envs/llava/
 cd /mntcephfs/lab_data/songdingjie/mllm/LLaVA/
@@ -14,7 +14,6 @@ declare -A model_dict
 
 ## Inference
 # model_dict["llava"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5"
-model_dict["llava-vicuna-13b-v1.5"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/model/llava-v1.5-13b"
 # model_dict["llava-vicuna-7b-v1.5-only-inference-Pooling_beforeMLP_K448"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5-only-inference-Pooling_beforeMLP_K448"
 # model_dict["llava-vicuna-7b-v1.5-only-inference-Pooling_beforeMLP_K384"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5-only-inference-Pooling_beforeMLP_K384"
 # model_dict["llava-vicuna-7b-v1.5-only-inference-Pooling_beforeMLP_K256"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5-only-inference-Pooling_beforeMLP_K256"
@@ -66,6 +65,7 @@ model_dict["llava-vicuna-13b-v1.5"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/
 # model_dict["llava-vicuna-7b-v1.5-only-finetune-TextSim_beforeMLP_T0.01"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-7b-v1.5-only-finetune-TextSim_beforeMLP_T0.01"
 # model_dict["llava-vicuna-7b-v1.5-only-finetune-TextSim_beforeMLP_T0.05"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned2/llava-vicuna-7b-v1.5-only-finetune-TextSim_beforeMLP_T0.05"
 # model_dict["llava-vicuna-7b-v1.5-only-finetune-TextSim_beforeMLP_T0.1"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-7b-v1.5-only-finetune-TextSim_beforeMLP_T0.1"
+model_dict["llava-vicuna-7b-v1.5-only-finetune-TextSim_beforeMLP_T0.2"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned2/llava-vicuna-7b-v1.5-only-finetune-TextSim_beforeMLP_T0.2"
 # model_dict["llava-vicuna-7b-v1.5-only-finetune-TextSim_beforeMLP_T0.3"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-7b-v1.5-only-finetune-TextSim_beforeMLP_T0.3"
 # model_dict["llava-vicuna-7b-v1.5-only-finetune-TextSim_beforeMLP_T0.5"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-7b-v1.5-only-finetune-TextSim_beforeMLP_T0.5"
 # model_dict["llava-vicuna-7b-v1.5-only-finetune-TextSim_beforeMLP_T0.7"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-7b-v1.5-only-finetune-TextSim_beforeMLP_T0.7"
@@ -78,110 +78,100 @@ model_dict["llava-vicuna-13b-v1.5"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/
 # model_dict["llava-vicuna-13b-v1.5-only-finetune-TextSim_beforeMLP_T0.05"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-13b-v1.5-only-finetune-TextSim_beforeMLP_T0.05"
 # model_dict["llava-vicuna-13b-v1.5-only-finetune-TextSim_beforeMLP_T0.3"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-13b-v1.5-only-finetune-TextSim_beforeMLP_T0.3"
 # model_dict["llava-vicuna-13b-v1.5-only-finetune-TextSim+_beforeMLP_T-1"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-13b-v1.5-only-finetune-TextSim+_beforeMLP_T-1"
-# model_dict["llava-vicuna-7b-v1.5-only-finetune-TextSim+_beforeMLP_T-1_Lora_new"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned2/llava-vicuna-7b-v1.5-only-finetune-TextSim+_beforeMLP_T-1_Lora"
-# model_dict["llava-vicuna-7b-v1.5-only-finetune-TextSim+_beforeMLP_T-1_Lora_new_2e-5"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned2/llava-vicuna-7b-v1.5-only-finetune-TextSim+_beforeMLP_T-1_Lora_2e-5"
+
 
 for key in "${!model_dict[@]}"; do
     MODEL_ID=$key
     MODLE_DIR=${model_dict[$key]}
-    MODEL_BASE=""
-
-    if [[ "$MODEL_ID" == *"Lora"* ]]; then
-        if [[ "$MODEL_ID" == *"13b"* ]]; then
-            MODEL_BASE="model/llava-v1.5-13b"
-        else
-            MODEL_BASE="model/llava-v1.5-7b"
-        fi
-    fi
 
     PATH_TO_ALL_RESULTS="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/benchmark_results/$MODEL_ID.txt"
 
-    ########################## Run each benchmark sequentially ##########################
-    # # GQA Done
-    # echo "=========================================================="
-    # echo "$MODEL_ID Running GQA"
-    # echo "=========================================================="
-    # bash scripts/v1_5/eval/gqa.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS $MODEL_BASE
-
-    # # MMBench-en
-    # echo "=========================================================="
-    # echo "$MODEL_ID Running MMBench-en"
-    # echo "=========================================================="
-    # bash scripts/v1_5/eval/mmbench.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS $MODEL_BASE
-
-    # # MMBench-cn
-    # echo "=========================================================="
-    # echo "$MODEL_ID Running MMBench-cn"
-    # echo "=========================================================="
-    # bash scripts/v1_5/eval/mmbench_cn.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS $MODEL_BASE
-
-    # # MME
-    # echo "=========================================================="
-    # echo "$MODEL_ID Running MME"
-    # echo "=========================================================="
-    # bash scripts/v1_5/eval/mme.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS $MODEL_BASE
-
-    # # ScienceQA
-    # echo "=========================================================="
-    # echo "$MODEL_ID Running ScienceQA"
-    # echo "=========================================================="
-    # bash scripts/v1_5/eval/sqa.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS $MODEL_BASE
-
-    # # TextVQA
-    # echo "=========================================================="
-    # echo "$MODEL_ID Running TextVQA"
-    # echo "=========================================================="
-    # bash scripts/v1_5/eval/textvqa.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS $MODEL_BASE
-
-    # # SEEDBench
-    # echo "=========================================================="
-    # echo "$MODEL_ID Running SEEDBench"
-    # echo "=========================================================="
-    # bash scripts/v1_5/eval/seed.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS $MODEL_BASE
-
-    # # MM-Vet
-    # # gpt-4-0613
-    # echo "=========================================================="
-    # echo "$MODEL_ID Running MM-Vet"
-    # echo "=========================================================="
-    # # bash benchmarks/MM-Vet/eval_mmvet.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS $MODEL_BASE
-    # bash scripts/v1_5/eval/mmvet.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS $MODEL_BASE
-
-    # # POPE
-    # echo "=========================================================="
-    # echo "$MODEL_ID Running POPE"
-    # echo "=========================================================="
-    # bash scripts/v1_5/eval/pope.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS $MODEL_BASE
-
-    # # VQAV2
-    # echo "=========================================================="
-    # echo "$MODEL_ID Running VQAV2"
-    # echo "=========================================================="
-    # bash scripts/v1_5/eval/vqav2.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS $MODEL_BASE
-
-    # # VisWiz
-    # echo "=========================================================="
-    # echo "$MODEL_ID Running VisWiz"
-    # echo "=========================================================="
-    # bash scripts/v1_5/eval/vizwiz.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS $MODEL_BASE
-
-    # # LLaVA-Bench
-    # echo "=========================================================="
-    # echo "$MODEL_ID Running LLaVA-Bench"
-    # echo "=========================================================="
-    # bash scripts/v1_5/eval/llavabench.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS $MODEL_BASE
-
-    # MSVD
+    # ########################## Run each benchmark sequentially ##########################
+    # GQA Done
     echo "=========================================================="
-    echo "$MODEL_ID Running MSVD"
+    echo "$MODEL_ID Running GQA"
     echo "=========================================================="
-    bash scripts/v1_5/eval/msvd.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS $MODEL_BASE
+    bash scripts/v1_5/eval/gqa.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS
 
-    # MSRVTT
+    # MMBench-en
     echo "=========================================================="
-    echo "$MODEL_ID Running MSRVTT"
+    echo "$MODEL_ID Running MMBench-en"
     echo "=========================================================="
-    bash scripts/v1_5/eval/msrvtt.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS $MODEL_BASE
+    bash scripts/v1_5/eval/mmbench.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS
+
+    # MMBench-cn
+    echo "=========================================================="
+    echo "$MODEL_ID Running MMBench-cn"
+    echo "=========================================================="
+    bash scripts/v1_5/eval/mmbench_cn.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS
+
+    # MME
+    echo "=========================================================="
+    echo "$MODEL_ID Running MME"
+    echo "=========================================================="
+    bash scripts/v1_5/eval/mme.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS
+
+    # ScienceQA
+    echo "=========================================================="
+    echo "$MODEL_ID Running ScienceQA"
+    echo "=========================================================="
+    bash scripts/v1_5/eval/sqa.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS
+
+    # TextVQA
+    echo "=========================================================="
+    echo "$MODEL_ID Running TextVQA"
+    echo "=========================================================="
+    bash scripts/v1_5/eval/textvqa.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS
+
+    # SEEDBench
+    echo "=========================================================="
+    echo "$MODEL_ID Running SEEDBench"
+    echo "=========================================================="
+    bash scripts/v1_5/eval/seed.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS
+
+    # MM-Vet
+    # gpt-4-0613
+    echo "=========================================================="
+    echo "$MODEL_ID Running MM-Vet"
+    echo "=========================================================="
+    # bash benchmarks/MM-Vet/eval_mmvet.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS
+    bash scripts/v1_5/eval/mmvet.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS
+
+    # POPE
+    echo "=========================================================="
+    echo "$MODEL_ID Running POPE"
+    echo "=========================================================="
+    bash scripts/v1_5/eval/pope.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS
+
+    # VQAV2
+    echo "=========================================================="
+    echo "$MODEL_ID Running VQAV2"
+    echo "=========================================================="
+    bash scripts/v1_5/eval/vqav2.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS
+
+    # VisWiz
+    echo "=========================================================="
+    echo "$MODEL_ID Running VisWiz"
+    echo "=========================================================="
+    bash scripts/v1_5/eval/vizwiz.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS
+
+    # LLaVA-Bench
+    echo "=========================================================="
+    echo "$MODEL_ID Running LLaVA-Bench"
+    echo "=========================================================="
+    bash scripts/v1_5/eval/llavabench.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS
+
+    # # MSVD
+    # echo "=========================================================="
+    # echo "$MODEL_ID Running MSVD"
+    # echo "=========================================================="
+    # bash scripts/v1_5/eval/msvd.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS
+
+    # # MSRVTT
+    # echo "=========================================================="
+    # echo "$MODEL_ID Running MSRVTT"
+    # echo "=========================================================="
+    # bash scripts/v1_5/eval/msrvtt.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS
 
 
 
@@ -192,7 +182,7 @@ for key in "${!model_dict[@]}"; do
     # echo "=========================================================="
     # echo "$MODEL_ID Running MMMU"
     # echo "=========================================================="
-    # bash benchmarks/MMMU/eval_mmmu.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS $MODEL_BASE
+    # bash benchmarks/MMMU/eval_mmmu.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS
 
 
     # # TouchStone
@@ -200,7 +190,7 @@ for key in "${!model_dict[@]}"; do
     # echo "=========================================================="
     # echo "$MODEL_ID Running TouchStone"
     # echo "=========================================================="
-    # bash benchmarks/touchstone/eval_touchstone.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS $MODEL_BASE
+    # bash benchmarks/touchstone/eval_touchstone.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS
     # ########################## Run each benchmark sequentially ##########################
 done
 

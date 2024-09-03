@@ -79,6 +79,7 @@ def eval_model(args):
                 temperature=args.temperature,
                 max_new_tokens=1024,
                 use_cache=True,
+                texts=cur_prompt.replace('<image>', ' ')
             )
 
         outputs = tokenizer.batch_decode(output_ids, skip_special_tokens=True)[0].strip()

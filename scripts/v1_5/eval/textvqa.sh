@@ -16,6 +16,7 @@
 CKPT=$1
 mp=$2
 path_to_all_results=$3
+MODEL_BASE=$4
 
 gpu_list=$(nvidia-smi --query-gpu=index --format=csv,noheader | tr '\n' ',' | sed 's/,$//')
 # gpu_list="2,3,4,5,6"
@@ -29,6 +30,7 @@ CHUNKS=${#GPULIST[@]}
 for IDX in $(seq 0 $((CHUNKS-1))); do
     CUDA_VISIBLE_DEVICES=${GPULIST[$IDX]} python ./llava/eval/model_vqa_loader.py \
         --model-path $mp \
+        --model-base $MODEL_BASE \
         --question-file ./benchmarks/TextVQA/llava_textvqa_val_v051_ocr.jsonl \
         --image-folder ./benchmarks/TextVQA/train_images \
         --answers-file ./playground/data/eval/textvqa/answers/$CKPT/${CHUNKS}_${IDX}.jsonl \

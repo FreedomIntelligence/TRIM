@@ -28,7 +28,9 @@ data_qa_image_folder_path="/mntnfs/med_data5/guimingchen/datasets/llava/svit"
 # MODEL_VERSION=llama-2-7b-chat
 # MODEL_VERSION=Meta-Llama-3-8B
 # MODEL_VERSION=vicuna-7b-v1.1
-MODEL_VERSION=vicuna-7b-v1.5
+# MODEL_VERSION=vicuna-7b-v1.5
+MODEL_VERSION=vicuna-13b-v1.5
+
 # vision_tower="model/clip_vit_large_patch14"
 vision_tower="model/clip-vit-large-patch14-336/snapshots/ce19dc912ca5cd21c8a653c79e251e808ccabcd1"
 ################## Training Config ################
@@ -42,39 +44,43 @@ model_max_length=2048
 PROMPT_VERSION=v1
 # PROMPT_VERSION="llava_llama_2"
 ########### DO NOT CHANGE ###########
-reduce_func=TextSim
+reduce_func=TextSim+
 
 # experiment_name=llava-${MODEL_VERSION}-finetune
 # experiment_name=llava-${MODEL_VERSION}-pretrain-finetune-PCA_beforeMLP_thres0.99
 # experiment_name=llava-${MODEL_VERSION}-only-finetune-PCA_beforeMLP_thres0.99
 # experiment_name=llava-${MODEL_VERSION}-only-finetune-KMEANS_beforeMLP_K160
 
-mlp_adapter_path="/mntcephfs/lab_data/chenshunian/workspace/LLaVA/checkpoints/llava-vicuna-7b-v1.5-pretrain/"
+# mlp_adapter_path="/mntcephfs/lab_data/chenshunian/workspace/LLaVA/checkpoints/llava-vicuna-7b-v1.5-pretrain/"
+# mlp_adapter_path="/mntcephfs/data/med/songdingjie/checkpoints/llava-v1.5-mlp2x-336px-pretrain-vicuna-13b-v1.5"
 # mlp_adapter_path="./checkpoints/llava-${MODEL_VERSION}-pretrain-PCA_beforeMLP_thres0.99/"
+mlp_adapter_path="model/llava-v1.5-13b"
 
 # linear: 448 384 256 144 128 64 32 16 8 4 2
 # area: 256 144 64 36
-for reduce_func_param in 0.2; do
-experiment_name=llava-${MODEL_VERSION}-only-finetune-${reduce_func}_beforeMLP_T${reduce_func_param}
-export WANDB_NAME="only-finetune-${reduce_func}_beforeMLP_T${reduce_func_param}"
+for reduce_func_param in -1; do
+experiment_name=llava-${MODEL_VERSION}-only-finetune-${reduce_func}_beforeMLP_T${reduce_func_param}_Lora_2e-5
+export WANDB_NAME="13B-only-finetune-${reduce_func}_beforeMLP_T${reduce_func_param}_Lora"
 
+    # --model_name_or_path /mntcephfs/data/med/guimingchen/models/mllm/llava-v1.5-13b \
+    # --pretrain_mm_mlp_adapter ${mlp_adapter_path}/mm_projector.bin \
 deepspeed llava/train/train_mem.py \
+    --lora_enable True --lora_r 128 --lora_alpha 256 --mm_projector_lr 2e-5 \
     --deepspeed ./scripts/zero3.json \
-    --model_name_or_path ./model/$MODEL_VERSION \
+    --model_name_or_path ${mlp_adapter_path} \
     --version $PROMPT_VERSION \
     --data_path ${data_qa_path} \
     --image_folder ${data_qa_image_folder_path} \
     --image_aspect_ratio pad \
     --group_by_modality_length True \
     --vision_tower ${vision_tower} \
-    --pretrain_mm_mlp_adapter ${mlp_adapter_path}/mm_projector.bin \
     --mm_vision_select_layer -2 \
     --mm_vision_token_reduce_func ${reduce_func}:${reduce_func_param} \
     --mm_use_im_start_end False \
     --mm_use_im_patch_token False \
     --mm_projector_type mlp2x_gelu \
     --bf16 True \
-    --output_dir ./checkpoints/finetuned2/${experiment_name} \
+    --output_dir ./checkpoints/finetuned/${experiment_name} \
     --num_train_epochs 1 \
     --per_device_train_batch_size ${per_device_train_batch_size} \
     --per_device_eval_batch_size ${per_device_eval_batch_size} \

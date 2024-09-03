@@ -2,6 +2,7 @@
 CKPT=$1
 MODEL_DIR=$2
 PATH_TO_ALL_RESULTS=$3
+MODEL_BASE=$4
 
 gpu_list="${CUDA_VISIBLE_DEVICES:-0}"
 IFS=',' read -ra GPULIST <<< "$gpu_list"
@@ -14,6 +15,7 @@ GQADIR="./playground/data/eval/gqa/data"
 for IDX in $(seq 0 $((CHUNKS-1))); do
     CUDA_VISIBLE_DEVICES=${GPULIST[$IDX]} python -m llava.eval.model_vqa_loader \
         --model-path ${MODEL_DIR} \
+        --model-base $MODEL_BASE \
         --question-file ./playground/data/eval/gqa/$SPLIT.jsonl \
         --image-folder ./playground/data/eval/gqa/data/images \
         --answers-file ./playground/data/eval/gqa/answers/$SPLIT/$CKPT/${CHUNKS}_${IDX}.jsonl \

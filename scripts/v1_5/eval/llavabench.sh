@@ -3,9 +3,12 @@
 CKPT=$1
 mp=$2
 path_to_all_results=$3
+MODEL_BASE=$4
+CUDA_VISIBLE_DEVICES=0
 
 python ./llava/eval/model_vqa_loader.py \
     --model-path $mp \
+    --model-base $MODEL_BASE \
     --question-file ./playground/data/eval/llava-bench-in-the-wild/questions.jsonl \
     --image-folder ./playground/data/eval/llava-bench-in-the-wild/images \
     --answers-file ./playground/data/eval/llava-bench-in-the-wild/answers/$CKPT.jsonl \
