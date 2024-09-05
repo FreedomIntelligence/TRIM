@@ -171,17 +171,17 @@ for key in "${!model_dict[@]}"; do
     # echo "=========================================================="
     # bash scripts/v1_5/eval/llavabench.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS $MODEL_BASE
 
-    # MSVD
-    echo "=========================================================="
-    echo "$MODEL_ID Running MSVD"
-    echo "=========================================================="
-    bash scripts/v1_5/eval/msvd.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS $MODEL_BASE
+    # # MSVD
+    # echo "=========================================================="
+    # echo "$MODEL_ID Running MSVD"
+    # echo "=========================================================="
+    # bash scripts/v1_5/eval/msvd.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS $MODEL_BASE
 
-    # MSRVTT
-    echo "=========================================================="
-    echo "$MODEL_ID Running MSRVTT"
-    echo "=========================================================="
-    bash scripts/v1_5/eval/msrvtt.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS $MODEL_BASE
+    # # MSRVTT
+    # echo "=========================================================="
+    # echo "$MODEL_ID Running MSRVTT"
+    # echo "=========================================================="
+    # bash scripts/v1_5/eval/msrvtt.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS $MODEL_BASE
 
 
 
