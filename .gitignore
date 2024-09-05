@@ -42,4 +42,5 @@ benchmarks
 
 # Models
 model/
+!llava/model/
 llava/cli_demo/
