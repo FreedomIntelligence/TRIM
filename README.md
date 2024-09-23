@@ -18,7 +18,7 @@
 
 - [Introduction](#introduction)
 - [Dataset Preparation](#preparation)
-- [How to run](#(How to run))
+- [Run](#Run)
 - [License](#license)
 - [Contact](#contact)
 - [Citation](#Citation)
@@ -43,7 +43,7 @@ pip install -r requirements.txt
 
 
 
-## How to run
+## Run
 
 ### Step.0: Set the environment the same as LLaVA-1.5
 
