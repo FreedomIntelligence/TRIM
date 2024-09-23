@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Less is More: A Simple yet Effective Token Reduction Method for Efficient Multi-modal LLMs
 
 [Dingjie Song](https://bbsngg.github.io/), Wenjun Wang, Shunian Chen, Xidong Wang, Michael Guan, Benyou Wang*
@@ -88,3 +89,18 @@ All other materials are licensed under the Creative Commons Attribution 4.0 Inte
 ## Citation
 
 If you find this repository helpful, please consider citing it:
+
+
+
+```
+@misc{song2024moresimpleeffectivetoken,
+      title={Less is More: A Simple yet Effective Token Reduction Method for Efficient Multi-modal LLMs}, 
+      author={Dingjie Song and Wenjun Wang and Shunian Chen and Xidong Wang and Michael Guan and Benyou Wang},
+      year={2024},
+      eprint={2409.10994},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2409.10994}, 
+}
+```
+
