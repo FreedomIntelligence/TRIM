@@ -5,7 +5,7 @@
 ![Python 3.10+](https://img.shields.io/badge/Python-3.10-lightblue) ![Pytorch 2.1.1](https://img.shields.io/badge/PyTorch-2.1-lightblue) ![transformers](https://img.shields.io/badge/transformers-4.37.0.dev0%2B-lightblue) ![accelerate](https://img.shields.io/badge/accelerate-0.28.0-lightblue)
 </center>
 
-[**🤗 Paper**](https://arxiv.org/abs/2409.10994) | [**📖 arXiv**](https://arxiv.org/abs/2409.10994) | [**GitHub**](https://github.com/bbsngg/AdaptiveLLaVA)
+[**🤗 Paper**](https://arxiv.org/abs/2409.10994) | [**📖 arXiv**](https://arxiv.org/abs/2409.10994) | [**GitHub**](https://github.com/FreedomIntelligence/TRIM)
 
 ## 🌈 Update
 
@@ -35,7 +35,7 @@ We introduce new approach, **T**oken **R**eduction using CL**I**P **M**etric (**
 ## Preparation
 
 ### 🤖 Environment Setup
-See [LLaVA](https://github.com/haotian-liu/LLaVA?tab=readme-ov-file#install).
+Please refer to [LLaVA](https://github.com/haotian-liu/LLaVA?tab=readme-ov-file#install). 😊
 
 
 ## Run
