@@ -13,73 +13,14 @@ declare -A model_dict
 
 
 ## Inference
-# model_dict["llava"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5"
-model_dict["llava-vicuna-13b-v1.5"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/model/llava-v1.5-13b"
-# model_dict["llava-vicuna-7b-v1.5-only-inference-Pooling_beforeMLP_K448"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5-only-inference-Pooling_beforeMLP_K448"
-# model_dict["llava-vicuna-7b-v1.5-only-inference-Pooling_beforeMLP_K384"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5-only-inference-Pooling_beforeMLP_K384"
-# model_dict["llava-vicuna-7b-v1.5-only-inference-Pooling_beforeMLP_K256"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5-only-inference-Pooling_beforeMLP_K256"
-# model_dict["llava-vicuna-7b-v1.5-only-inference-Pooling_beforeMLP_K144"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5-only-inference-Pooling_beforeMLP_K144"
-# model_dict["llava-vicuna-7b-v1.5-only-inference-Pooling_beforeMLP_K128"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5-only-inference-Pooling_beforeMLP_K128"
-# model_dict["llava-vicuna-7b-v1.5-only-inference-Pooling_beforeMLP_K64"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5-only-inference-Pooling_beforeMLP_K64"
-# model_dict["llava-vicuna-7b-v1.5-only-inference-Pooling_beforeMLP_K32"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5-only-inference-Pooling_beforeMLP_K32"
-# model_dict["llava-vicuna-7b-v1.5-only-inference-Pooling_beforeMLP_K16"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5-only-inference-Pooling_beforeMLP_K16"
-# model_dict["llava-vicuna-7b-v1.5-only-inference-Pooling_beforeMLP_K8"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5-only-inference-Pooling_beforeMLP_K8"
-# model_dict["llava-vicuna-7b-v1.5-only-inference-Pooling_beforeMLP_K4"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5-only-inference-Pooling_beforeMLP_K4"
-# model_dict["llava-vicuna-7b-v1.5-only-inference-Pooling_beforeMLP_K2"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5-only-inference-Pooling_beforeMLP_K2"
-# model_dict["llava-vicuna-7b-v1.5-only-inference-PCA_beforeMLP_T0.9"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5-only-inference-PCA_beforeMLP_T0.9"
-# model_dict["llava-vicuna-7b-v1.5-only-inference-PCA_beforeMLP_T0.99"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5-only-inference-PCA_beforeMLP_T0.99"
-# model_dict["llava-vicuna-7b-v1.5-only-inference-PCA_beforeMLP_T0.999"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5-only-inference-PCA_beforeMLP_T0.999"
-# model_dict["llava-vicuna-7b-v1.5-only-inference-PCA_beforeMLP_T0.9999"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5-only-inference-PCA_beforeMLP_T0.9999"
 # TextSim
-# model_dict["llava-vicuna-7b-v1.5-only-inference-TextSim_beforeMLP_T0.01"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5-only-inference-TextSim_beforeMLP_T0.01"
-# model_dict["llava-vicuna-7b-v1.5-only-inference-TextSim_beforeMLP_T0.05"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5-only-inference-TextSim_beforeMLP_T0.05"
-# model_dict["llava-vicuna-7b-v1.5-only-inference-TextSim_beforeMLP_T0.1"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5-only-inference-TextSim_beforeMLP_T0.1"
-# model_dict["llava-vicuna-7b-v1.5-only-inference-TextSim_beforeMLP_T0.3"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5-only-inference-TextSim_beforeMLP_T0.3"
-# model_dict["llava-vicuna-7b-v1.5-only-inference-TextSim_beforeMLP_T0.5"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5-only-inference-TextSim_beforeMLP_T0.5"
-# model_dict["llava-vicuna-7b-v1.5-only-inference-TextSim_beforeMLP_T0.7"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5-only-inference-TextSim_beforeMLP_T0.7"
-# model_dict["llava-vicuna-7b-v1.5-only-inference-TextSim_beforeMLP_T0.9"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5-only-inference-TextSim_beforeMLP_T0.9"
-# model_dict["llava-vicuna-7b-v1.5-only-inference-TextSim+_beforeMLP_T0.05"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5-only-inference-TextSim+_beforeMLP_T0.05"
 # model_dict["llava-vicuna-7b-v1.5-only-inference-TextSim_beforeMLP_T-1"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5-only-inference-TextSim_beforeMLP_T-1"
 # model_dict["llava-vicuna-7b-v1.5-only-inference-TextSim+_beforeMLP_T-1"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5-only-inference-TextSim+_beforeMLP_T-1"
 
 ## Finetuned
-# # Pooling
-# model_dict["llava-vicuna-7b-v1.5-only-finetune-Pooling_beforeMLP_K448"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-7b-v1.5-only-finetune-Pooling_beforeMLP_K448"
-# model_dict["llava-vicuna-7b-v1.5-only-finetune-Pooling_beforeMLP_K384"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-7b-v1.5-only-finetune-Pooling_beforeMLP_K384"
-# model_dict["llava-vicuna-7b-v1.5-only-finetune-Pooling_beforeMLP_K256"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-7b-v1.5-only-finetune-Pooling_beforeMLP_K256"
-# model_dict["llava-vicuna-7b-v1.5-only-finetune-Pooling_beforeMLP_K144"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-7b-v1.5-only-finetune-Pooling_beforeMLP_K144"
-# model_dict["llava-vicuna-7b-v1.5-only-finetune-Pooling_beforeMLP_K128"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-7b-v1.5-only-finetune-Pooling_beforeMLP_K128"
-# model_dict["llava-vicuna-7b-v1.5-only-finetune-Pooling_beforeMLP_K64"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-7b-v1.5-only-finetune-Pooling_beforeMLP_K64"
-# model_dict["llava-vicuna-7b-v1.5-only-finetune-Pooling_beforeMLP_K32"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-7b-v1.5-only-finetune-Pooling_beforeMLP_K32"
-# model_dict["llava-vicuna-7b-v1.5-only-finetune-Pooling_beforeMLP_K16"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-7b-v1.5-only-finetune-Pooling_beforeMLP_K16"
-# model_dict["llava-vicuna-7b-v1.5-only-finetune-Pooling_beforeMLP_K8"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-7b-v1.5-only-finetune-Pooling_beforeMLP_K8"
-# model_dict["llava-vicuna-7b-v1.5-only-finetune-Pooling_beforeMLP_K4"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-7b-v1.5-only-finetune-Pooling_beforeMLP_K4"
-# model_dict["llava-vicuna-7b-v1.5-only-finetune-Pooling_beforeMLP_K2"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-7b-v1.5-only-finetune-Pooling_beforeMLP_K2"
-# # PCA
-# model_dict["llava-vicuna-7b-v1.5-only-finetune-PCA_beforeMLP_T0.9"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-7b-v1.5-only-finetune-PCA_beforeMLP_T0.9"
-# model_dict["llava-vicuna-7b-v1.5-only-finetune-PCA_beforeMLP_T0.99"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-7b-v1.5-only-finetune-PCA_beforeMLP_T0.99"
-# model_dict["llava-vicuna-7b-v1.5-only-finetune-PCA_beforeMLP_T0.999"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-7b-v1.5-only-finetune-PCA_beforeMLP_T0.999"
-# model_dict["llava-vicuna-7b-v1.5-only-finetune-PCA_beforeMLP_T0.9999"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-7b-v1.5-only-finetune-PCA_beforeMLP_T0.9999"
-# # Cluster
-# model_dict["llava-vicuna-7b-v1.5-only-finetune-Cluster_beforeMLP_K0.3"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-7b-v1.5-only-finetune-Cluster_beforeMLP_K0.3"
 # TextSim
-# model_dict["llava-vicuna-7b-v1.5-only-finetune-TextSim_beforeMLP_T0.01"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-7b-v1.5-only-finetune-TextSim_beforeMLP_T0.01"
-# model_dict["llava-vicuna-7b-v1.5-only-finetune-TextSim_beforeMLP_T0.05"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned2/llava-vicuna-7b-v1.5-only-finetune-TextSim_beforeMLP_T0.05"
-# model_dict["llava-vicuna-7b-v1.5-only-finetune-TextSim_beforeMLP_T0.1"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-7b-v1.5-only-finetune-TextSim_beforeMLP_T0.1"
-# model_dict["llava-vicuna-7b-v1.5-only-finetune-TextSim_beforeMLP_T0.3"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-7b-v1.5-only-finetune-TextSim_beforeMLP_T0.3"
-# model_dict["llava-vicuna-7b-v1.5-only-finetune-TextSim_beforeMLP_T0.5"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-7b-v1.5-only-finetune-TextSim_beforeMLP_T0.5"
-# model_dict["llava-vicuna-7b-v1.5-only-finetune-TextSim_beforeMLP_T0.7"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-7b-v1.5-only-finetune-TextSim_beforeMLP_T0.7"
-# model_dict["llava-vicuna-7b-v1.5-only-finetune-TextSim_beforeMLP_T0.9"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned2/llava-vicuna-7b-v1.5-only-finetune-TextSim_beforeMLP_T0.9"
-# model_dict["llava-vicuna-7b-v1.5-only-finetune-TextSim+_beforeMLP_T0.05"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned2/llava-vicuna-7b-v1.5-only-finetune-TextSim+_beforeMLP_T0.05"
 # model_dict["llava-vicuna-7b-v1.5-only-finetune-TextSim_beforeMLP_T-1"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned2/llava-vicuna-7b-v1.5-only-finetune-TextSim_beforeMLP_T-1"
-# model_dict["llava-vicuna-7b-v1.5-only-finetune-TextSim+_beforeMLP_T-1"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned2/llava-vicuna-7b-v1.5-only-finetune-TextSim+_beforeMLP_T-1"
-# model_dict["llava-vicuna-13b-v1.5-only-finetune-TextSim_beforeMLP_T-1"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-13b-v1.5-only-finetune-TextSim_beforeMLP_T-1"
-# model_dict["llava-vicuna-13b-v1.5-only-finetune-TextSim_beforeMLP_T0.01"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-13b-v1.5-only-finetune-TextSim_beforeMLP_T0.01"
-# model_dict["llava-vicuna-13b-v1.5-only-finetune-TextSim_beforeMLP_T0.05"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-13b-v1.5-only-finetune-TextSim_beforeMLP_T0.05"
-# model_dict["llava-vicuna-13b-v1.5-only-finetune-TextSim_beforeMLP_T0.3"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-13b-v1.5-only-finetune-TextSim_beforeMLP_T0.3"
 # model_dict["llava-vicuna-13b-v1.5-only-finetune-TextSim+_beforeMLP_T-1"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-13b-v1.5-only-finetune-TextSim+_beforeMLP_T-1"
-# model_dict["llava-vicuna-7b-v1.5-only-finetune-TextSim+_beforeMLP_T-1_Lora_new"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned2/llava-vicuna-7b-v1.5-only-finetune-TextSim+_beforeMLP_T-1_Lora"
-# model_dict["llava-vicuna-7b-v1.5-only-finetune-TextSim+_beforeMLP_T-1_Lora_new_2e-5"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned2/llava-vicuna-7b-v1.5-only-finetune-TextSim+_beforeMLP_T-1_Lora_2e-5"
 
 for key in "${!model_dict[@]}"; do
     MODEL_ID=$key
