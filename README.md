@@ -35,7 +35,7 @@ We introduce new approach, **T**oken **R**eduction using CL**I**P **M**etric (**
 ## Preparation
 
 ### 🤖 Environment Setup
-see [LLaVA](https://github.com/haotian-liu/LLaVA?tab=readme-ov-file#install)
+See [LLaVA](https://github.com/haotian-liu/LLaVA?tab=readme-ov-file#install).
 
 
 ## Run
