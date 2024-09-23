@@ -4,10 +4,6 @@
 
 [**🤗 Paper**](https://arxiv.org/abs/2409.10994) | [**📖 arXiv**](https://arxiv.org/abs/2409.10994) | [**GitHub**](https://github.com/bbsngg/AdaptiveLLaVA)
 
-<div align="center">
-  <img src="https://github.com/bbsngg/AdaptiveLLaVA/blob/main/images/TRIM.png" alt="Our approach" width="100%">
-</div>
-
 ## 🌈 Update
 
 - **[2024.9.23]** 🎉🎉🎉 TRIM is public!🎉🎉🎉
