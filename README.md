@@ -6,7 +6,7 @@
 [[Paper](https://arxiv.org/abs/2409.10994)] [[Project Page](https://github.com/bbsngg/AdaptiveLLaVA)]
 
 <div align="center">
-  <img src="https://github.com/bbsngg/AdaptiveLLaVA/blob/main/images/TRIM.png" alt="Our approach" width="50%">
+  <img src="https://github.com/bbsngg/AdaptiveLLaVA/blob/main/images/TRIM.png" alt="Our approach" width="80%">
 </div>
 
 
