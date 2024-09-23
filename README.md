@@ -2,7 +2,7 @@
 
 [Dingjie Song](https://bbsngg.github.io/), Wenjun Wang, Shunian Chen, Xidong Wang, Michael Guan, Benyou Wang*
 
-[**🤗 Paper**](https://arxiv.org/abs/2409.10994) | [**📖 arXiv**](https://arxiv.org/abs/2409.10994) | [**GitHub**](https://github.com/bbsngg/AdaptiveLLaVA)]
+[**🤗 Paper**](https://arxiv.org/abs/2409.10994) | [**📖 arXiv**](https://arxiv.org/abs/2409.10994) | [**GitHub**](https://github.com/bbsngg/AdaptiveLLaVA)
 
 <div align="center">
   <img src="https://github.com/bbsngg/AdaptiveLLaVA/blob/main/images/TRIM.png" alt="Our approach" width="100%">
@@ -11,6 +11,35 @@
 ## 🌈 Update
 
 - **[2024.9.23]** 🎉🎉🎉 TRIM is public!🎉🎉🎉
+
+
+
+## Contents
+
+- [Introduction](#introduction)
+- [Dataset Preparation](#preparation)
+- [How run](#How run)
+- [License](#license)
+- [Contact](#contact)
+- [Citation](#Citation)
+
+
+
+## Introduction
+
+We introduce new approach, **T**oken **R**eduction using CL**I**P **M**etric (**TRIM**), aimed at improving the efficiency of MLLMs without sacrificing their performance. Inspired by human attention patterns in Visual Question Answering (VQA) tasks, TRIM presents a fresh perspective on the selection and reduction of image tokens. The TRIM method has been extensively tested across 12 datasets, and the results demonstrate a significant reduction in computational overhead while maintaining a consistent level of performance. This research marks a critical stride in efficient MLLM development, promoting greater accessibility and sustainability of high-performing models.
+
+
+
+## Preparation
+
+### 🤖 Environment Setup
+
+Install required packages:
+
+```bash
+pip install -r requirements.txt
+```
 
 
 
@@ -64,17 +93,3 @@ All other materials are licensed under the Creative Commons Attribution 4.0 Inte
 ## Citation
 
 If you find this repository helpful, please consider citing it:
-
-
-```
-@misc{song2024moresimpleeffectivetoken,
-      title={Less is More: A Simple yet Effective Token Reduction Method for Efficient Multi-modal LLMs}, 
-      author={Dingjie Song and Wenjun Wang and Shunian Chen and Xidong Wang and Michael Guan and Benyou Wang},
-      year={2024},
-      eprint={2409.10994},
-      archivePrefix={arXiv},
-      primaryClass={cs.CL},
-      url={https://arxiv.org/abs/2409.10994}, 
-}
-```
-
