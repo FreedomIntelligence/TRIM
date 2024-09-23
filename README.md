@@ -1,6 +1,7 @@
 # Less is More: A Simple yet Effective Token Reduction Method for Efficient Multi-modal LLMs
 
 [Dingjie Song](https://bbsngg.github.io/), Wenjun Wang, Shunian Chen, Xidong Wang, Michael Guan, Benyou Wang*
+
 ![Python 3.10+](https://img.shields.io/badge/Python-3.10-lightblue) ![Pytorch 2.1.1](https://img.shields.io/badge/PyTorch-2.1-lightblue) ![transformers](https://img.shields.io/badge/transformers-4.37.0.dev0%2B-lightblue) ![accelerate](https://img.shields.io/badge/accelerate-0.28.0-lightblue)
 </center>
 
