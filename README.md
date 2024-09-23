@@ -82,7 +82,7 @@ All other materials are licensed under the Creative Commons Attribution 4.0 Inte
 
 ## Contact
 
-- Dingjie Song: bbsngg@outlook.com
+- Dingjie Song: dingjiesong.cs@gmail.com
 - Benyou Wang: wangbenyou@cuhk.edu.cn
 
 ## Citation
