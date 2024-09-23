@@ -48,7 +48,7 @@ Note that the core of our proposed module is [here](https://github.com/FreedomIn
 
 Download the checkpoints from [huggingface](https://huggingface.co/liuhaotian/llava-v1.5-7b) to liuhaotian/llava-v1.5-7b.
 
-### Step.2 (for inference): Change the methods (TextSim or TextSim+).
+### Step.2 (for inference): Change the methods (TRIM).
 
 Change the call function of token reduction from [here](https://github.com/FreedomIntelligence/TRIM/blob/main/llava/model/multimodal_encoder/clip_encoder.py) in the CLIP image encoder. 
 
