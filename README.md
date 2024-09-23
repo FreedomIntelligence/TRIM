@@ -41,7 +41,9 @@ Install required packages:
 pip install -r requirements.txt
 ```
 
-
+<div align="center">
+  <img src="https://github.com/bbsngg/AdaptiveLLaVA/blob/main/images/TRIM.png" alt="Our approach" width="100%">
+</div>
 
 ## Run
 
