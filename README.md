@@ -6,7 +6,7 @@
 [[Paper](https://arxiv.org/abs/2409.10994)] [[Project Page](https://github.com/bbsngg/AdaptiveLLaVA)]
 
 <div align="center">
-  <img src="https://github.com/bbsngg/AdaptiveLLaVA/tree/main/images/TRIM.png" alt="Our approach" width="50%">
+  <img src="https://github.com/bbsngg/AdaptiveLLaVA/blob/main/images/TRIM.png" alt="Our approach" width="50%">
 </div>
 
 
@@ -19,7 +19,7 @@ Note that the core of our proposed module is [here](https://github.com/bbsngg/Ad
 
 ### Step.1 (for inference): Download Checkpoints
 
-Download the checkpoints (LoRA Version) from [Yuzhang's Huggingface Homepage](https://huggingface.co/yuzhang) to checkpoints/llava-v1.5-7b-lora-prunemerge.
+Download the checkpoints from [huggingface](https://huggingface.co/liuhaotian/llava-v1.5-7b) to liuhaotian/llava-v1.5-7b.
 
 ### Step.2 (for inference): Change the methods (TextSim or TextSim+).
 
