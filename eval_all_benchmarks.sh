@@ -13,14 +13,12 @@ declare -A model_dict
 
 
 ## Inference
-# TextSim
-# model_dict["llava-vicuna-7b-v1.5-only-inference-TextSim_beforeMLP_T-1"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5-only-inference-TextSim_beforeMLP_T-1"
-# model_dict["llava-vicuna-7b-v1.5-only-inference-TextSim+_beforeMLP_T-1"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5-only-inference-TextSim+_beforeMLP_T-1"
+# model_dict["llava-vicuna-7b-v1.5-only-inference-TRIM"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5-only-inference-TRIM"
+# model_dict["llava-vicuna-13b-v1.5-only-inference-TRIM"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-13b-v1.5-only-inference-TRIM"
 
 ## Finetuned
-# TextSim
-# model_dict["llava-vicuna-7b-v1.5-only-finetune-TextSim_beforeMLP_T-1"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned2/llava-vicuna-7b-v1.5-only-finetune-TextSim_beforeMLP_T-1"
-# model_dict["llava-vicuna-13b-v1.5-only-finetune-TextSim+_beforeMLP_T-1"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-13b-v1.5-only-finetune-TextSim+_beforeMLP_T-1"
+# model_dict["llava-vicuna-7b-v1.5-only-finetune-TRIM"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned2/llava-vicuna-7b-v1.5-only-finetune-TRIM"
+# model_dict["llava-vicuna-13b-v1.5-only-finetune-TRIM"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-13b-v1.5-only-finetune-TRIM"
 
 for key in "${!model_dict[@]}"; do
     MODEL_ID=$key

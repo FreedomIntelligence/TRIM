@@ -114,7 +114,7 @@ class CLIPVisionTower(nn.Module):
         self.vision_tower.requires_grad_(False)
 
         # NOTE: CLIP text encoder
-        if self.token_reduce_func and 'TextSim' in self.token_reduce_func:
+        if self.token_reduce_func and 'TRIM' in self.token_reduce_func:
             if device_map:  # NOTE: eval
                 self.clip_model = CLIPModel.from_pretrained(self.vision_tower_name)
                 # self.vision_tower = self.clip_model.vision_model
@@ -142,10 +142,10 @@ class CLIPVisionTower(nn.Module):
     def token_reduction(self, image_features, all_image_features, text_features=None):
         if not self.token_reduce_func:
             return image_features, [image_features.shape[1]]*image_features.shape[0]
-        elif 'TextSim' in self.token_reduce_func:
+        elif 'TRIM' in self.token_reduce_func:
 
             batch_size, tokens_number, dimension = image_features.shape
-            k = float(self.token_reduce_func.replace('TextSim:', '').replace('TextSim+:', ''))  # Set your desired k value here
+            k = float(self.token_reduce_func.replace('TRIM:', ''))  # Set your desired k value here
 
             # Get image embedding
             with torch.cuda.amp.autocast(enabled=False):
@@ -194,7 +194,7 @@ class CLIPVisionTower(nn.Module):
             token_mask[batch_indices, topk_indices] = True
             selected_image_features[:, :num_tokens_to_keep] = image_features[token_mask].view(batch_size, num_tokens_to_keep, -1)
 
-            if 'TextSim+' in self.token_reduce_func:
+            if 'TRIM' in self.token_reduce_func:
                 remaining_mask = torch.logical_not(token_mask)
 
                 if remaining_mask.sum(dim=1).min().item() > 0:
@@ -207,7 +207,7 @@ class CLIPVisionTower(nn.Module):
                 selected_image_features[:, num_tokens_to_keep] = remaining_mean
 
             # Update actual_dims
-            actual_dims = [num_tokens_to_keep + (1 if 'TextSim+' in self.token_reduce_func else 0)] * batch_size
+            actual_dims = [num_tokens_to_keep + (1 if 'TRIM' in self.token_reduce_func else 0)] * batch_size
             image_features = selected_image_features
 
             if image_features.dtype == torch.float32:   # NOTE: eval
@@ -241,7 +241,7 @@ class CLIPVisionTower(nn.Module):
                     all_image_features.append(all_image_feature)
 
             # If using text similarity reduction
-            if self.token_reduce_func and 'TextSim' in self.token_reduce_func:
+            if self.token_reduce_func and 'TRIM' in self.token_reduce_func:
                 with torch.cuda.stream(text_stream):  # Process text in parallel
                     text_inputs = self.text_tokenizer(text=texts, return_tensors="pt", truncation=True, padding=True)
                     text_inputs = {k: v.to(device=image_features.device) for k, v in text_inputs.items()}  
@@ -261,7 +261,7 @@ class CLIPVisionTower(nn.Module):
                 all_image_features = all_image_features.to(images.dtype)
 
             # If using text similarity reduction
-            if self.token_reduce_func and 'TextSim' in self.token_reduce_func:
+            if self.token_reduce_func and 'TRIM' in self.token_reduce_func:
                 # Process text in parallel
                 with torch.cuda.stream(text_stream):  
                     text_inputs = self.text_tokenizer(text=texts, return_tensors="pt", truncation=True, padding=True)
