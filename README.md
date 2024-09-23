@@ -18,7 +18,7 @@
 
 - [Introduction](#introduction)
 - [Dataset Preparation](#preparation)
-- [How run](#How run)
+- [How to run](#How to run)
 - [License](#license)
 - [Contact](#contact)
 - [Citation](#Citation)
