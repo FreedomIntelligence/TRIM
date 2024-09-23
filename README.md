@@ -1,6 +1,6 @@
 # Less is More: A Simple yet Effective Token Reduction Method for Efficient Multi-modal LLMs
 
-[Dingjie Song](https://dingjie-song.netlify.app/), Wenjun Wang, Shunian Chen, Xidong Wang, Michael Guan, Benyou Wang*
+[Dingjie Song](https://bbsngg.github.io/), Wenjun Wang, Shunian Chen, Xidong Wang, Michael Guan, Benyou Wang*
 
 
 [[Paper](https://arxiv.org/abs/2409.10994)] [[Project Page](https://github.com/bbsngg/AdaptiveLLaVA)]
