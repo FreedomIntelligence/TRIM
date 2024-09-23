@@ -25,7 +25,9 @@
 
 We introduce new approach, **T**oken **R**eduction using CL**I**P **M**etric (**TRIM**), aimed at improving the efficiency of MLLMs without sacrificing their performance. Inspired by human attention patterns in Visual Question Answering (VQA) tasks, TRIM presents a fresh perspective on the selection and reduction of image tokens. The TRIM method has been extensively tested across 12 datasets, and the results demonstrate a significant reduction in computational overhead while maintaining a consistent level of performance. This research marks a critical stride in efficient MLLM development, promoting greater accessibility and sustainability of high-performing models.
 
-
+```bash
+pip install -r requirements.txt
+```
 
 ## Preparation
 
@@ -33,9 +35,6 @@ We introduce new approach, **T**oken **R**eduction using CL**I**P **M**etric (**
 
 Install required packages:
 
-```bash
-pip install -r requirements.txt
-```
 
 <div align="center">
   <img src="https://github.com/bbsngg/AdaptiveLLaVA/blob/main/images/TRIM.png" alt="Our approach" width="100%">
