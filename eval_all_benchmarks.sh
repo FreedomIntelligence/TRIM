@@ -1,24 +1,15 @@
 #!/bin/bash
 
-# bash /mntcephfs/lab_data/songdingjie/mllm/LLaVA/eval_all_benchmarks.sh
-module load cuda11.8/toolkit/11.8.0
-# source /mntcephfs/data/med/songdingjie/envs/llava/
-cd /mntcephfs/lab_data/songdingjie/mllm/LLaVA/
-# export PYTHONPATH="${PYTHONPATH}:/mntcephfs/lab_data/songdingjie/mllm/LLaVA"
-# export PATH="${PATH}:/mntcephfs/lab_data/songdingjie/mllm/LLaVA"
-# export CUDA_VISIBLE_DEVICES=0
-
 ########################## Setup model_id and checkpoint_dir ##########################
 declare -A model_dict
 
-
-## Inference
-# model_dict["llava-vicuna-7b-v1.5-only-inference-TRIM"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-7b-v1.5-only-inference-TRIM"
-# model_dict["llava-vicuna-13b-v1.5-only-inference-TRIM"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/inference/llava-vicuna-13b-v1.5-only-inference-TRIM"
+## No Finetuned
+# model_dict["llava-vicuna-7b-v1.5-only-inference-TRIM"]="/path/to/llava-vicuna-7b-v1.5-only-inference-TRIM"
+# model_dict["llava-vicuna-13b-v1.5-only-inference-TRIM"]="/path/to/llava-vicuna-13b-v1.5-only-inference-TRIM"
 
 ## Finetuned
-# model_dict["llava-vicuna-7b-v1.5-only-finetune-TRIM"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned2/llava-vicuna-7b-v1.5-only-finetune-TRIM"
-# model_dict["llava-vicuna-13b-v1.5-only-finetune-TRIM"]="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/checkpoints/finetuned/llava-vicuna-13b-v1.5-only-finetune-TRIM"
+# model_dict["llava-vicuna-7b-v1.5-only-finetune-TRIM"]="/path/to/llava-vicuna-7b-v1.5-only-finetune-TRIM"
+# model_dict["llava-vicuna-13b-v1.5-only-finetune-TRIM"]="/path/to/llava-vicuna-13b-v1.5-only-finetune-TRIM"
 
 for key in "${!model_dict[@]}"; do
     MODEL_ID=$key
@@ -110,36 +101,6 @@ for key in "${!model_dict[@]}"; do
     # echo "=========================================================="
     # bash scripts/v1_5/eval/llavabench.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS $MODEL_BASE
 
-    # # MSVD
-    # echo "=========================================================="
-    # echo "$MODEL_ID Running MSVD"
-    # echo "=========================================================="
-    # bash scripts/v1_5/eval/msvd.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS $MODEL_BASE
-
-    # # MSRVTT
-    # echo "=========================================================="
-    # echo "$MODEL_ID Running MSRVTT"
-    # echo "=========================================================="
-    # bash scripts/v1_5/eval/msrvtt.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS $MODEL_BASE
-
-
-
-
-
-
-    # # MMMU
-    # echo "=========================================================="
-    # echo "$MODEL_ID Running MMMU"
-    # echo "=========================================================="
-    # bash benchmarks/MMMU/eval_mmmu.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS $MODEL_BASE
-
-
-    # # TouchStone
-    # # gpt-4-0613
-    # echo "=========================================================="
-    # echo "$MODEL_ID Running TouchStone"
-    # echo "=========================================================="
-    # bash benchmarks/touchstone/eval_touchstone.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS $MODEL_BASE
     # ########################## Run each benchmark sequentially ##########################
 done
 
