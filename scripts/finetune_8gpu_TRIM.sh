@@ -20,7 +20,7 @@ model_max_length=2048
 ########### USE THIS FOR BOTH ###########
 PROMPT_VERSION=v1
 ########### DO NOT CHANGE ###########
-reduce_func=TextSim+
+reduce_func=TRIM
 mlp_adapter_path="/path/to/llava-vicuna-7b-v1.5-pretrain/"
 
 for reduce_func_param in -1; do

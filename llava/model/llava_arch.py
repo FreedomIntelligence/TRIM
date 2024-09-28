@@ -273,7 +273,7 @@ class LlavaMetaForCausalLM(ABC):
             new_labels.append(cur_new_labels)
 
         # Log the size of cur_image_features dim=0 size
-        print(actual_dims)
+        # print(actual_dims)
 
         # Truncate sequences to max length as image embeddings can make the sequence longer
         tokenizer_model_max_length = getattr(self.config, 'tokenizer_model_max_length', None)

@@ -4,7 +4,7 @@
 declare -A model_dict
 
 ## No Finetuned
-# model_dict["llava-vicuna-7b-v1.5-only-inference-TRIM"]="/path/to/llava-vicuna-7b-v1.5-only-inference-TRIM"
+model_dict["llava-vicuna-7b-v1.5-only-inference-TRIM"]="/path/to/llava-vicuna-7b-v1.5-only-inference-TRIM"
 # model_dict["llava-vicuna-13b-v1.5-only-inference-TRIM"]="/path/to/llava-vicuna-13b-v1.5-only-inference-TRIM"
 
 ## Finetuned
@@ -24,14 +24,14 @@ for key in "${!model_dict[@]}"; do
         fi
     fi
 
-    PATH_TO_ALL_RESULTS="/mntcephfs/lab_data/songdingjie/mllm/LLaVA/benchmark_results/$MODEL_ID.txt"
+    PATH_TO_ALL_RESULTS="/path/tp/benchmark_results/$MODEL_ID.txt"
 
     ########################## Run each benchmark sequentially ##########################
-    # # GQA Done
-    # echo "=========================================================="
-    # echo "$MODEL_ID Running GQA"
-    # echo "=========================================================="
-    # bash scripts/v1_5/eval/gqa.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS $MODEL_BASE
+    # GQA
+    echo "=========================================================="
+    echo "$MODEL_ID Running GQA"
+    echo "=========================================================="
+    bash scripts/v1_5/eval/gqa.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS $MODEL_BASE
 
     # # MMBench-en
     # echo "=========================================================="
@@ -70,11 +70,9 @@ for key in "${!model_dict[@]}"; do
     # bash scripts/v1_5/eval/seed.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS $MODEL_BASE
 
     # # MM-Vet
-    # # gpt-4-0613
     # echo "=========================================================="
     # echo "$MODEL_ID Running MM-Vet"
     # echo "=========================================================="
-    # # bash benchmarks/MM-Vet/eval_mmvet.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS $MODEL_BASE
     # bash scripts/v1_5/eval/mmvet.sh $MODEL_ID $MODLE_DIR $PATH_TO_ALL_RESULTS $MODEL_BASE
 
     # # POPE

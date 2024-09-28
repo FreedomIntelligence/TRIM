@@ -37,24 +37,37 @@ We introduce new approach, **T**oken **R**eduction using CL**I**P **M**etric (**
 ### 🤖 Environment Setup
 Please refer to [LLaVA](https://github.com/haotian-liu/LLaVA?tab=readme-ov-file#install). 😊
 
-
 ## Run
 
 ### Step.0: Set the environment the same as LLaVA-1.5
 
-Note that the core of our proposed module is [here](https://github.com/FreedomIntelligence/TRIM/blob/main/llava/model/multimodal_encoder/clip_encoder.py) in the CLIP image encoder.  
+Note that the core of our proposed module is [here](https://github.com/FreedomIntelligence/TRIM/blob/main/llava/model/multimodal_encoder/clip_encoder.py) in the CLIP image encoder.
 
-### Step.1 (for inference): Download Checkpoints
+### Step.1.1 (for training): Train model with TRIM
 
-Download the checkpoints from [huggingface](https://huggingface.co/liuhaotian/llava-v1.5-7b) to liuhaotian/llava-v1.5-7b.
+If you want to reproduce the result of the model trained with TRIM, configure the [dataset](https://github.com/haotian-liu/LLaVA?tab=readme-ov-file#visual-instruction-tuning) path, [vision_tower](https://huggingface.co/openai/clip-vit-large-patch14-336) path, [projecter](https://github.com/haotian-liu/LLaVA/blob/main/docs/MODEL_ZOO.md#projector-weights) path and [LLM](https://huggingface.co/lmsys/vicuna-7b-v1.5) checkpoint path in the training script.
+
+Please set `reduce_func` as `TRIM`, `reduce_func_param` as `-1` for automatic selection.
+
+```shell
+bash scripts/finetune_8gpu_TRIM.sh
+```
+
+### Step.1.2 (for inference): Download checkpoints
+
+If you want to use TRIM without training the model, please download the checkpoints from [Huggingface liuhaotian/llava-v1.5-7b](https://huggingface.co/liuhaotian/llava-v1.5-7b) or [Our fine-tuned model with TRIM](https://huggingface.co/).
 
 ### Step.2 (for inference): Change the methods (TRIM).
 
-Change the call function of token reduction from [here](https://github.com/FreedomIntelligence/TRIM/blob/main/llava/model/multimodal_encoder/clip_encoder.py) in the CLIP image encoder. 
+If you wish to implement TRIM in another model, such as liuhaotian/llava-v1.5-7b in Huggingface, **please add the following line** to the `config.json` file in the model's directory.
 
-### Step.3 (for inference): Run the script.
+```json
+    "mm_vision_token_reduce_func": "TRIM:-1",
+```
 
-For all benchmark，the evaluation is：
+### Step.3 (for evaluation): Run the evaluation script.
+
+If you want to reproduce the result in our paper, for all benchmark，the evaluation script is：
 
 ```shell
 bash eval_all_benchmarks.sh
@@ -89,17 +102,14 @@ All other materials are licensed under the Creative Commons Attribution 4.0 Inte
 
 If you find this repository helpful, please consider citing it:
 
-
-
 ```
 @misc{song2024moresimpleeffectivetoken,
-      title={Less is More: A Simple yet Effective Token Reduction Method for Efficient Multi-modal LLMs}, 
+      title={Less is More: A Simple yet Effective Token Reduction Method for Efficient Multi-modal LLMs},
       author={Dingjie Song and Wenjun Wang and Shunian Chen and Xidong Wang and Michael Guan and Benyou Wang},
       year={2024},
       eprint={2409.10994},
       archivePrefix={arXiv},
       primaryClass={cs.CL},
-      url={https://arxiv.org/abs/2409.10994}, 
+      url={https://arxiv.org/abs/2409.10994},
 }
 ```
-

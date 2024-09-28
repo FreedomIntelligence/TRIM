@@ -18,8 +18,8 @@ class CLIPVisionTower(nn.Module):
         self.vision_tower_name = vision_tower
         self.select_layer = args.mm_vision_select_layer
         self.select_feature = getattr(args, 'mm_vision_select_feature', 'patch')
-        self.token_reduce_func = getattr(args, 'mm_vision_token_reduce_func', None) 
-        
+        self.token_reduce_func = getattr(args, 'mm_vision_token_reduce_func', None)
+
         if not delay_load:
             self.load_model()
         elif getattr(args, 'unfreeze_mm_vision_tower', False):
@@ -47,6 +47,7 @@ class CLIPVisionTower(nn.Module):
             else:
                 self.vision_tower = CLIPVisionModelWithProjection.from_pretrained(self.vision_tower_name, device_map=device_map)
 
+            # Only for TRIM
             self.text_tower = CLIPTextModelWithProjection.from_pretrained(self.vision_tower_name, device_map=device_map)
             self.text_tokenizer = AutoTokenizer.from_pretrained(self.vision_tower_name)
             self.text_tower.requires_grad_(False)
@@ -80,7 +81,7 @@ class CLIPVisionTower(nn.Module):
                 # print(self.vision_tower.vision_model.post_layernorm.weight.dtype)
                 nomalized_image_features = self.vision_tower.vision_model.post_layernorm(image_features)
                 proj_image_features = self.vision_tower.visual_projection(nomalized_image_features)
-            
+
             # Calculate similarity
             similarities = torch.matmul(proj_image_features, text_features.unsqueeze(2)).squeeze(2)  # [batch_size, tokens_number]
 
@@ -111,26 +112,26 @@ class CLIPVisionTower(nn.Module):
 
             # Use indices to gather the top-k tokens
             selected_image_features = torch.zeros_like(image_features)
-            
+
             batch_indices = torch.arange(batch_size, device=image_features.device).unsqueeze(1)
             token_mask = torch.zeros(batch_size, tokens_number, device=image_features.device, dtype=torch.bool)
 
             token_mask[batch_indices, topk_indices] = True
             selected_image_features[:, :num_tokens_to_keep] = image_features[token_mask].view(batch_size, num_tokens_to_keep, -1)
 
-            if 'TRIM' in self.token_reduce_func:
-                remaining_mask = torch.logical_not(token_mask)
+            # Get the aggregated token
+            remaining_mask = torch.logical_not(token_mask)
 
-                if remaining_mask.sum(dim=1).min().item() > 0:
-                    # compute left tokens's mean
-                    remaining_mean = (image_features * remaining_mask.unsqueeze(-1)).sum(dim=1) / remaining_mask.sum(dim=1, keepdim=True)
-                else:
-                    remaining_mean = torch.zeros(batch_size, dimension, device=image_features.device)
-            
-                # Populates the mean to the specified position
-                selected_image_features[:, num_tokens_to_keep] = remaining_mean
+            if remaining_mask.sum(dim=1).min().item() > 0:
+                # compute left tokens's mean
+                remaining_mean = (image_features * remaining_mask.unsqueeze(-1)).sum(dim=1) / remaining_mask.sum(dim=1, keepdim=True)
+            else:
+                remaining_mean = torch.zeros(batch_size, dimension, device=image_features.device)
 
-            # Update actual_dims
+            # Populates the mean to the specified position
+            selected_image_features[:, num_tokens_to_keep] = remaining_mean
+
+            # Update actual_dims (actual dimension of tensors)
             actual_dims = [num_tokens_to_keep + (1 if 'TRIM' in self.token_reduce_func else 0)] * batch_size
             image_features = selected_image_features
 
@@ -144,17 +145,17 @@ class CLIPVisionTower(nn.Module):
     def forward(self, images, texts=None):
 
         # Initialize text features
-        text_features = None  
+        text_features = None
 
         if type(images) is list:  # If multiple images
-            image_features = []  
-            all_image_features = []  
+            image_features = []
+            all_image_features = []
 
-            image_stream = torch.cuda.Stream()  
-            text_stream = torch.cuda.Stream()  
+            image_stream = torch.cuda.Stream()
+            text_stream = torch.cuda.Stream()
 
             # Process images in parallel
-            with torch.cuda.stream(image_stream):  
+            with torch.cuda.stream(image_stream):
                 for image in images:
                     # Extract image features
                     image_forward_out = self.vision_tower(image.to(device=self.device, dtype=self.dtype).unsqueeze(0), output_hidden_states=True)
@@ -168,17 +169,17 @@ class CLIPVisionTower(nn.Module):
             if self.token_reduce_func and 'TRIM' in self.token_reduce_func:
                 with torch.cuda.stream(text_stream):  # Process text in parallel
                     text_inputs = self.text_tokenizer(text=texts, return_tensors="pt", truncation=True, padding=True)
-                    text_inputs = {k: v.to(device=image_features.device) for k, v in text_inputs.items()}  
-                    text_features = self.text_tower(**text_inputs, output_hidden_states=False).text_embeds  
+                    text_inputs = {k: v.to(device=image_features.device) for k, v in text_inputs.items()}
+                    text_features = self.text_tower(**text_inputs, output_hidden_states=False).text_embeds
 
-            torch.cuda.synchronize()  
+            torch.cuda.synchronize()
 
         else:  # If single image
-            image_stream = torch.cuda.Stream()  
-            text_stream = torch.cuda.Stream()  
+            image_stream = torch.cuda.Stream()
+            text_stream = torch.cuda.Stream()
 
             # Process the image
-            with torch.cuda.stream(image_stream):  
+            with torch.cuda.stream(image_stream):
                 image_forward_outs = self.vision_tower(images.to(device=self.device, dtype=self.dtype), output_hidden_states=True)
                 image_features, all_image_features = self.feature_select(image_forward_outs)
                 image_features = image_features.to(images.dtype)  # Ensure correct dtype
@@ -187,13 +188,13 @@ class CLIPVisionTower(nn.Module):
             # If using text similarity reduction
             if self.token_reduce_func and 'TRIM' in self.token_reduce_func:
                 # Process text in parallel
-                with torch.cuda.stream(text_stream):  
+                with torch.cuda.stream(text_stream):
                     text_inputs = self.text_tokenizer(text=texts, return_tensors="pt", truncation=True, padding=True)
-                    text_inputs = {k: v.to(device=image_features.device) for k, v in text_inputs.items()}  
-                    text_features = self.text_tower(**text_inputs, output_hidden_states=False).text_embeds  
+                    text_inputs = {k: v.to(device=image_features.device) for k, v in text_inputs.items()}
+                    text_features = self.text_tower(**text_inputs, output_hidden_states=False).text_embeds
 
             torch.cuda.synchronize()  # Synchronize streams to ensure both are done
-        
+
         #NOTE:Perform token reduction on image and text features
         image_features, actual_dims = self.token_reduction(image_features, all_image_features, text_features)
 

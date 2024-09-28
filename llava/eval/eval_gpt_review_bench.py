@@ -27,8 +27,8 @@ def get_eval(content: str, max_tokens: int):
             #     temperature=0.2,  # TODO: figure out which temperature is best for evaluation
             #     max_tokens=max_tokens,
             # )
-            FOWARD_URL = "https://api.ai-gaochao.net/v1/chat/completions"
-            api_key = "sk-BF4MTQqMUaEa6UEV360805EcD7B441D1A7940386B5De6222"
+            FOWARD_URL = ""
+            api_key = ""
             TIME_OUT = 20
 
 
