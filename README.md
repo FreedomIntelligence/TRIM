@@ -43,7 +43,9 @@ Please refer to [LLaVA](https://github.com/haotian-liu/LLaVA?tab=readme-ov-file#
 
 Note that the core of our proposed module is [here](https://github.com/FreedomIntelligence/TRIM/blob/main/llava/model/multimodal_encoder/clip_encoder.py) in the CLIP image encoder.
 
-### Step.1.1 (for training): Train model with TRIM
+### Step.1: Model preparation
+
+#### Train model with TRIM
 
 If you want to reproduce the result of the model trained with TRIM, configure the [dataset](https://github.com/haotian-liu/LLaVA?tab=readme-ov-file#visual-instruction-tuning) path, [vision_tower](https://huggingface.co/openai/clip-vit-large-patch14-336) path, [projecter](https://github.com/haotian-liu/LLaVA/blob/main/docs/MODEL_ZOO.md#projector-weights) path and [LLM](https://huggingface.co/lmsys/vicuna-7b-v1.5) checkpoint path in the training script.
 
@@ -53,7 +55,7 @@ Please set `reduce_func` as `TRIM`, `reduce_func_param` as `-1` for automatic se
 bash scripts/finetune_8gpu_TRIM.sh
 ```
 
-### Step.1.2 (for inference): Download checkpoints
+#### or Download checkpoints
 
 If you want to use TRIM without training the model, please download the checkpoints from [Huggingface liuhaotian/llava-v1.5-7b](https://huggingface.co/liuhaotian/llava-v1.5-7b) or [Our fine-tuned model with TRIM](https://huggingface.co/).
 
