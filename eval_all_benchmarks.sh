@@ -4,12 +4,12 @@
 declare -A model_dict
 
 ## No Finetuned
-model_dict["llava-vicuna-7b-v1.5-only-inference-TRIM"]="/path/to/llava-vicuna-7b-v1.5-only-inference-TRIM"
+# model_dict["llava-vicuna-7b-v1.5-only-inference-TRIMllava-v1.5-7b-TRIM "]="/path/to/llava-vicuna-7b-v1.5-only-inference-TRIM"
 # model_dict["llava-vicuna-13b-v1.5-only-inference-TRIM"]="/path/to/llava-vicuna-13b-v1.5-only-inference-TRIM"
 
 ## Finetuned
-# model_dict["llava-vicuna-7b-v1.5-only-finetune-TRIM"]="/path/to/llava-vicuna-7b-v1.5-only-finetune-TRIM"
-# model_dict["llava-vicuna-13b-v1.5-only-finetune-TRIM"]="/path/to/llava-vicuna-13b-v1.5-only-finetune-TRIM"
+model_dict["llava-v1.5-7b-TRIM"]="/path/to/llava-v1.5-7b-TRIM"
+# model_dict["llava-v1.5-13b-TRIM"]="/path/to/llava-v1.5-13b-TRIM"
 
 for key in "${!model_dict[@]}"; do
     MODEL_ID=$key
