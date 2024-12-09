@@ -61,7 +61,7 @@ bash scripts/finetune_8gpu_TRIM.sh
 
 #### or Download checkpoints
 
-If you want to use TRIM without training the model, please download the checkpoints from [Huggingface liuhaotian/llava-v1.5-7b](https://huggingface.co/liuhaotian/llava-v1.5-7b) or [Our fine-tuned model with TRIM](https://huggingface.co/FreedomIntelligence/llava-v1.5-7b-TRIM).
+If you want to use TRIM without training the model, please download the checkpoints from [Huggingface liuhaotian/llava-v1.5-7b](https://huggingface.co/liuhaotian/llava-v1.5-7b) or [Our fine-tuned 7B model with TRIM](https://huggingface.co/FreedomIntelligence/llava-v1.5-7b-TRIM) or [Our fine-tuned 13B model with TRIM](https://huggingface.co/FreedomIntelligence/llava-v1.5-13b-TRIM).
 
 ### Step.2 (for inference): Change the methods (TRIM).
 
