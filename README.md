@@ -73,7 +73,7 @@ If you wish to implement TRIM in another model, such as liuhaotian/llava-v1.5-7b
 
 ### Step.3 (for evaluation): Run the evaluation script.
 
-If you want to reproduce the result in our paper, for all benchmark，the evaluation script is：
+If you want to reproduce the result in our paper, for all benchmarks，the evaluation script is：
 
 ```shell
 bash eval_all_benchmarks.sh
